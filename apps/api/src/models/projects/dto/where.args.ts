@@ -24,6 +24,10 @@ export class ProjectWhereInput
   implements RestrictProperties<ProjectWhereInput, Prisma.ProjectWhereInput>
 {
   @Field(() => IntFilter, { nullable: true })
+  price: IntFilter
+  @Field(() => IntFilter, { nullable: true })
+  balance: IntFilter
+  @Field(() => IntFilter, { nullable: true })
   id: IntFilter
   @Field(() => StringFilter, { nullable: true })
   name: StringFilter

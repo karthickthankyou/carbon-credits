@@ -15,6 +15,10 @@ export class ProjectOrderByWithRelationInput
     >
 {
   @Field(() => Prisma.SortOrder, { nullable: true })
+  price: Prisma.SortOrder
+  @Field(() => Prisma.SortOrder, { nullable: true })
+  balance: Prisma.SortOrder
+  @Field(() => Prisma.SortOrder, { nullable: true })
   id: Prisma.SortOrder
   @Field(() => Prisma.SortOrder, { nullable: true })
   name: Prisma.SortOrder

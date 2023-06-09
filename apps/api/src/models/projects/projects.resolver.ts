@@ -7,6 +7,8 @@ import { PrismaService } from 'src/common/prisma/prisma.service'
 import { Inventory } from '../inventories/entities/inventory.entity'
 import { Transfer } from '../transfers/entities/transfer.entity'
 import { Retirement } from '../retirements/entities/retirement.entity'
+import { AggregateCountOutput } from 'src/common/dtos/common.input'
+import { ProjectWhereInput } from './dto/where.args'
 
 @Resolver(() => Project)
 export class ProjectsResolver {
@@ -16,13 +18,30 @@ export class ProjectsResolver {
   ) {}
 
   @Query(() => [Project], { name: 'projects' })
-  findAll(@Args() args: FindManyProjectArgs) {
-    return this.projectsService.findAll(args)
+  findAll(
+    @Args() args: FindManyProjectArgs,
+    @Args('searchTerm', { nullable: true }) searchTerm: string,
+  ) {
+    return this.projectsService.findAll(args, searchTerm)
   }
 
   @Query(() => Project, { name: 'project' })
   findOne(@Args() args: FindUniqueProjectArgs) {
     return this.projectsService.findOne(args)
+  }
+
+  @Query(() => AggregateCountOutput, {
+    name: 'projectsCount',
+  })
+  async projectsCount(
+    @Args('where', { nullable: true })
+    where: ProjectWhereInput,
+  ) {
+    const projects = await this.prisma.project.aggregate({
+      _count: { _all: true },
+      where,
+    })
+    return { count: projects._count._all }
   }
 
   @ResolveField(() => [Verifier], { nullable: true })

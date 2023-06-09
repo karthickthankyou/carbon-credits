@@ -11,9 +11,11 @@ datasource db {
 }
 
 model Project {
-    id    Int    @id
-    name  String
-    owner String
+    id      Int    @id
+    name    String
+    owner   String
+    price   Int
+    balance Int
 
     verifiers   Verifier[]
     inventories Inventory[]
@@ -52,12 +54,12 @@ model Inventory {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     user      String
-
-    projectId Int
-    project   Project @relation(fields: [projectId], references: [id])
     balance   Int
     price     Int
     forSale   Boolean
+
+    project   Project @relation(fields: [projectId], references: [id])
+    projectId Int
 
     @@unique([user, projectId])
 }

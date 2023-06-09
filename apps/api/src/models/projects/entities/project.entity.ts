@@ -6,6 +6,8 @@ import { RestrictProperties } from 'src/common/dtos/common.input'
 export class Project implements RestrictProperties<Project, ProjectType> {
   id: number
   name: string
+  price: number
+  balance: number
   owner: string
   // Todo fill all properties. To make it nullable add below.
   // @Field(() => String, { nullable: true })

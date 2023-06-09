@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "@carbon-credits/api",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -31,6 +31,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@prisma/client": "4.15.0",
     "graphql": "^16.6.0",
+    "meilisearch": "^0.33.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "web3": "^1.10.0"

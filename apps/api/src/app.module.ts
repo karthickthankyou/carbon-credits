@@ -12,6 +12,7 @@ import { TransfersModule } from './models/transfers/transfers.module'
 import { VerifiersModule } from './models/verifiers/verifiers.module'
 import { PrismaModule } from './common/prisma/prisma.module'
 import { CeloModule } from './celo/celo.module'
+import { MeilisearchModule } from './meilisearch/meilisearch.module'
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { CeloModule } from './celo/celo.module'
 
     PrismaModule,
     CeloModule,
+    MeilisearchModule,
 
     InventoriesModule,
     ProjectsModule,
