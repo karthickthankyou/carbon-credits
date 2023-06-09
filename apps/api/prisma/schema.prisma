@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Project {
+    id    Int    @id
+    name  String
+    owner String
+
+    verifiers   Verifier[]
+    inventories Inventory[]
+    transfers   Transfer[]
+    retirements Retirement[]
+}
+
+model Verifier {
+    address  String    @id
+    projects Project[]
+}
+
+model Transfer {
+    id        Int      @id @default(autoincrement())
+    timestamp DateTime
+
+    projectId Int
+    project   Project @relation(fields: [projectId], references: [id])
+    from      String
+    to        String
+    quantity  Int
+}
+
+model Retirement {
+    id        Int      @id @default(autoincrement())
+    timestamp DateTime
+
+    projectId Int
+    project   Project @relation(fields: [projectId], references: [id])
+    retiree   String
+    quantity  Int
+}
+
+model Inventory {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    user      String
+
+    projectId Int
+    project   Project @relation(fields: [projectId], references: [id])
+    balance   Int
+    price     Int
+    forSale   Boolean
+
+    @@unique([user, projectId])
+}

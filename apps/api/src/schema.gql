@@ -1,0 +1,340 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Inventory {
+  id: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: String!
+  projectId: Int!
+  balance: Int!
+  price: Int!
+  forSale: Boolean!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Project {
+  id: Int!
+  name: String!
+  owner: String!
+}
+
+type Retirement {
+  id: Int!
+  timestamp: DateTime!
+  projectId: Int!
+  retiree: String!
+  quantity: Int!
+}
+
+type Transfer {
+  id: Int!
+  timestamp: DateTime!
+  projectId: Int!
+  from: String!
+  to: String!
+  quantity: Int!
+}
+
+type Verifier {
+  address: String!
+}
+
+type Query {
+  inventories(where: InventoryWhereInput, orderBy: [InventoryOrderByWithRelationInput!], cursor: InventoryWhereUniqueInput, take: Int, skip: Int, distinct: [InventoryScalarFieldEnum!]): [Inventory!]!
+  inventory(where: InventoryWhereUniqueInput): Inventory!
+  projects(where: ProjectWhereInput, orderBy: [ProjectOrderByWithRelationInput!], cursor: ProjectWhereUniqueInput, take: Int, skip: Int, distinct: [ProjectScalarFieldEnum!]): [Project!]!
+  project(where: ProjectWhereUniqueInput): Project!
+  retirements(where: RetirementWhereInput, orderBy: [RetirementOrderByWithRelationInput!], cursor: RetirementWhereUniqueInput, take: Int, skip: Int, distinct: [RetirementScalarFieldEnum!]): [Retirement!]!
+  retirement(where: RetirementWhereUniqueInput): Retirement!
+  transfers(where: TransferWhereInput, orderBy: [TransferOrderByWithRelationInput!], cursor: TransferWhereUniqueInput, take: Int, skip: Int, distinct: [TransferScalarFieldEnum!]): [Transfer!]!
+  transfer(where: TransferWhereUniqueInput): Transfer!
+  verifiers(where: VerifierWhereInput, orderBy: [VerifierOrderByWithRelationInput!], cursor: VerifierWhereUniqueInput, take: Int, skip: Int, distinct: [VerifierScalarFieldEnum!]): [Verifier!]!
+  verifier(where: VerifierWhereUniqueInput): Verifier!
+}
+
+input InventoryWhereInput {
+  id: IntFilter
+  createdAt: DateTimeFilter
+  updatedAt: DateTimeFilter
+  user: StringFilter
+  projectId: IntFilter
+  balance: IntFilter
+  price: IntFilter
+  forSale: BoolFilter
+  project: ProjectRelationFilter
+  AND: [InventoryWhereInput!]
+  OR: [InventoryWhereInput!]
+  NOT: [InventoryWhereInput!]
+}
+
+input IntFilter {
+  equals: Int
+  in: Int
+  notIn: Int
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: Int
+}
+
+input DateTimeFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+}
+
+input StringFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: String
+  mode: QueryMode
+}
+
+enum QueryMode {
+  default
+  insensitive
+}
+
+input BoolFilter {
+  equals: Boolean
+  not: Boolean
+}
+
+input ProjectRelationFilter {
+  is: ProjectWhereInput
+  isNot: ProjectWhereInput
+}
+
+input ProjectWhereInput {
+  id: IntFilter
+  name: StringFilter
+  owner: StringFilter
+  verifiers: VerifierListRelationFilter
+  inventories: InventoryListRelationFilter
+  transfers: TransferListRelationFilter
+  retirements: RetirementListRelationFilter
+  AND: [ProjectWhereInput!]
+  OR: [ProjectWhereInput!]
+  NOT: [ProjectWhereInput!]
+}
+
+input VerifierListRelationFilter {
+  every: VerifierWhereInput
+  some: VerifierWhereInput
+  none: VerifierWhereInput
+}
+
+input VerifierWhereInput {
+  address: StringFilter
+  projects: ProjectListRelationFilter
+  AND: [VerifierWhereInput!]
+  OR: [VerifierWhereInput!]
+  NOT: [VerifierWhereInput!]
+}
+
+input ProjectListRelationFilter {
+  every: ProjectWhereInput
+  some: ProjectWhereInput
+  none: ProjectWhereInput
+}
+
+input InventoryListRelationFilter {
+  every: InventoryWhereInput
+  some: InventoryWhereInput
+  none: InventoryWhereInput
+}
+
+input TransferListRelationFilter {
+  every: TransferWhereInput
+  some: TransferWhereInput
+  none: TransferWhereInput
+}
+
+input TransferWhereInput {
+  id: IntFilter
+  timestamp: DateTimeFilter
+  projectId: IntFilter
+  from: StringFilter
+  to: StringFilter
+  quantity: IntFilter
+  project: ProjectRelationFilter
+  AND: [TransferWhereInput!]
+  OR: [TransferWhereInput!]
+  NOT: [TransferWhereInput!]
+}
+
+input RetirementListRelationFilter {
+  every: RetirementWhereInput
+  some: RetirementWhereInput
+  none: RetirementWhereInput
+}
+
+input RetirementWhereInput {
+  id: IntFilter
+  timestamp: DateTimeFilter
+  projectId: IntFilter
+  retiree: StringFilter
+  quantity: IntFilter
+  project: ProjectRelationFilter
+  AND: [RetirementWhereInput!]
+  OR: [RetirementWhereInput!]
+  NOT: [RetirementWhereInput!]
+}
+
+input InventoryOrderByWithRelationInput {
+  id: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  user: SortOrder
+  projectId: SortOrder
+  balance: SortOrder
+  price: SortOrder
+  forSale: SortOrder
+  project: ProjectOrderByWithRelationInput
+}
+
+enum SortOrder {
+  asc
+  desc
+}
+
+input ProjectOrderByWithRelationInput {
+  id: SortOrder
+  name: SortOrder
+  owner: SortOrder
+  verifiers: VerifierOrderByRelationAggregateInput
+  inventories: InventoryOrderByRelationAggregateInput
+  transfers: TransferOrderByRelationAggregateInput
+  retirements: RetirementOrderByRelationAggregateInput
+}
+
+input VerifierOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input InventoryOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input TransferOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input RetirementOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input InventoryWhereUniqueInput {
+  user_projectId: InventoryUserProjectIdCompoundUniqueInput
+  id: Int
+}
+
+input InventoryUserProjectIdCompoundUniqueInput {
+  user: String!
+  projectId: Int!
+}
+
+enum InventoryScalarFieldEnum {
+  id
+  createdAt
+  updatedAt
+  user
+  projectId
+  balance
+  price
+  forSale
+}
+
+input ProjectWhereUniqueInput {
+  id: Int
+}
+
+enum ProjectScalarFieldEnum {
+  id
+  name
+  owner
+}
+
+input RetirementOrderByWithRelationInput {
+  id: SortOrder
+  timestamp: SortOrder
+  projectId: SortOrder
+  retiree: SortOrder
+  quantity: SortOrder
+  project: ProjectOrderByWithRelationInput
+}
+
+input RetirementWhereUniqueInput {
+  id: Int
+}
+
+enum RetirementScalarFieldEnum {
+  id
+  timestamp
+  projectId
+  retiree
+  quantity
+}
+
+input TransferOrderByWithRelationInput {
+  id: SortOrder
+  timestamp: SortOrder
+  projectId: SortOrder
+  from: SortOrder
+  to: SortOrder
+  quantity: SortOrder
+  project: ProjectOrderByWithRelationInput
+}
+
+input TransferWhereUniqueInput {
+  id: Int
+}
+
+enum TransferScalarFieldEnum {
+  id
+  timestamp
+  projectId
+  from
+  to
+  quantity
+}
+
+input VerifierOrderByWithRelationInput {
+  address: SortOrder
+  projects: ProjectOrderByRelationAggregateInput
+}
+
+input ProjectOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input VerifierWhereUniqueInput {
+  address: String
+}
+
+enum VerifierScalarFieldEnum {
+  address
+}
+
+type Mutation {
+  findAll(where: RetirementWhereInput, orderBy: [RetirementOrderByWithRelationInput!], cursor: RetirementWhereUniqueInput, take: Int, skip: Int, distinct: [RetirementScalarFieldEnum!]): Retirement!
+}

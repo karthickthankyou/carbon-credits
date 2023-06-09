@@ -4,49 +4,53 @@ pragma solidity ^0.8.0;
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
 contract CarbonCredits is Initializable {
-    address public owner;
-    uint256 creditIdCounter;
+    address payable public owner;
+    uint256 public constant COMMISSION_PERCENT = 1;
 
     function initialize() public initializer {
-        owner = msg.sender;
-        creditIdCounter = 1;
+        owner = payable(msg.sender);
     }
 
     struct Project {
         string name;
-        address[] verifiers;
-    }
-
-    struct Credit {
-        uint256 projectId;
-        address currentOwner;
-        bool retired;
+        address owner;
+        bool verified;
+        uint256 totalCredits;
+        uint256 price;
     }
 
     struct Inventory {
         uint256 quantity;
+        bool forSale;
         uint256 price;
     }
 
-    mapping(uint256 => Project) public projects;
-    mapping(uint256 => Credit) public credits;
+    Project[] public projects;
+    mapping(uint256 => address[]) public projectVerifiers;
     mapping(address => bool) public verifiers;
     mapping(address => mapping(uint256 => Inventory)) public inventories;
 
-    function createProject(
-        string memory name
-    ) public returns (uint256 projectId) {
-        projectId = uint256(keccak256(abi.encodePacked(name, block.timestamp)));
-        projects[projectId] = Project({
-            name: name,
-            verifiers: new address[](0)
-        });
-        return projectId;
-    }
+    event ProjectCreated(uint256 projectId, string name, address owner);
+    event ProjectVerified(uint256 projectId, address verifier);
+    event CreditsTransferred(
+        uint256 projectId,
+        address from,
+        address to,
+        uint256 quantity
+    );
+    event CreditsRetired(uint256 projectId, address retiree, uint256 quantity);
+    event InventoryUpdated(
+        uint256 projectId,
+        address user,
+        uint256 balance,
+        bool forSale
+    );
 
-    function registerVerifier(address verifier) public {
-        require(msg.sender == owner, 'Only the owner can register a verifier.');
-        verifiers[verifier] = true;
+    function createProject(string memory _name, uint256 _price) public {
+        uint256 projectId = projects.length;
+        projects.push(Project(_name, msg.sender, false, 0, _price));
+
+        emit ProjectCreated(projectId, _name, msg.sender);
     }
 
     function verifyProject(uint256 projectId) public {
@@ -54,84 +58,86 @@ contract CarbonCredits is Initializable {
             verifiers[msg.sender],
             'Only registered verifiers can verify projects'
         );
-
-        projects[projectId].verifiers.push(msg.sender);
-    }
-
-    function withdrawVerification(uint256 projectId) public {
         require(
-            verifiers[msg.sender],
-            'Only registered verifiers can withdraw verification'
+            !projects[projectId].verified,
+            'The project is already verified'
         );
 
-        // Find the verifier's index
-        uint256 index = projects[projectId].verifiers.length; // If verifier is not found, this will cause the function to revert
-        for (uint256 i = 0; i < projects[projectId].verifiers.length; i++) {
-            if (projects[projectId].verifiers[i] == msg.sender) {
-                index = i;
-                break;
-            }
-        }
+        projects[projectId].verified = true;
+        projectVerifiers[projectId].push(msg.sender);
 
-        // Remove the verifier from the array by moving the last element to this index and decreasing the array length
-        projects[projectId].verifiers[index] = projects[projectId].verifiers[
-            projects[projectId].verifiers.length - 1
-        ];
-        projects[projectId].verifiers.pop();
-    }
-
-    function setPrice(uint256 projectId, uint256 price) public {
-        Inventory storage inventory = inventories[msg.sender][projectId];
-        require(
-            inventory.quantity > 0,
-            'Seller does not have any credits for this project'
-        );
-
-        inventory.price = price;
+        emit ProjectVerified(projectId, msg.sender);
     }
 
     function buyCredits(
         uint256 projectId,
-        address seller,
+        address from,
         uint256 quantity
     ) public payable {
+        Inventory storage sellerInventory = inventories[from][projectId];
         require(
-            projects[projectId].verifiers.length > 0,
-            'Project must be verified by at least one verifier'
+            sellerInventory.quantity >= quantity,
+            'Not enough credits for sale'
+        );
+        require(sellerInventory.forSale, 'Credits are not for sale');
+
+        uint256 commission = calculateCommission(quantity);
+        uint256 totalCost = commission + quantity;
+        require(
+            msg.value >= totalCost,
+            'Not enough Ether sent to cover cost and commission'
         );
 
-        Inventory storage inventory = inventories[seller][projectId];
+        // Transfer the commission to the owner and the cost to the seller
+        payable(owner).transfer(commission);
+        payable(from).transfer(totalCost - commission);
 
-        require(
-            inventory.quantity >= quantity,
-            'Seller does not have enough credits for this project'
+        sellerInventory.quantity -= quantity;
+        inventories[msg.sender][projectId].quantity += quantity;
+
+        emit CreditsTransferred(projectId, from, msg.sender, quantity);
+        emit InventoryUpdated(
+            projectId,
+            from,
+            sellerInventory.quantity,
+            sellerInventory.forSale
         );
-        require(
-            msg.value >= inventory.price * quantity,
-            'Not enough Ether sent to buy the credits'
+        emit InventoryUpdated(
+            projectId,
+            msg.sender,
+            inventories[msg.sender][projectId].quantity,
+            inventories[msg.sender][projectId].forSale
         );
-
-        payable(seller).transfer(inventory.price * quantity);
-        inventory.quantity -= quantity;
-
-        // Transfer the credits to the buyer
-        for (uint256 i = 0; i < quantity; i++) {
-            credits[creditIdCounter++] = Credit({
-                projectId: projectId,
-                currentOwner: msg.sender,
-                retired: false
-            });
-        }
     }
 
-    function retireCredit(uint256 creditId) public {
-        Credit storage credit = credits[creditId];
+    function retireCredits(uint256 projectId, uint256 quantity) public payable {
+        Inventory storage senderInventory = inventories[msg.sender][projectId];
         require(
-            credit.currentOwner == msg.sender,
-            'Only the credit owner can retire the credit'
+            senderInventory.quantity >= quantity,
+            'Not enough credits to retire'
         );
-        require(!credit.retired, 'The credit is already retired');
 
-        credit.retired = true;
+        uint256 commission = calculateCommission(quantity);
+        require(
+            msg.value >= commission,
+            'Not enough Ether to cover commission'
+        );
+        owner.transfer(commission);
+
+        senderInventory.quantity -= quantity;
+
+        emit CreditsRetired(projectId, msg.sender, quantity);
+        emit InventoryUpdated(
+            projectId,
+            msg.sender,
+            senderInventory.quantity,
+            senderInventory.forSale
+        );
+    }
+
+    function calculateCommission(
+        uint256 quantity
+    ) private pure returns (uint256) {
+        return (quantity * COMMISSION_PERCENT) / 100;
     }
 }

@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: carbon_credits_db
+    image: postgres
+    restart: always
+    ports:
+      - 1002:5432
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  pgadmin:
+    container_name: carbon_credits_pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - '1102:80'
+    depends_on:
+      - db
+  meilisearch:
+    container_name: carbon_credits_meili
+    image: getmeili/meilisearch:latest
+    ports:
+      - 1202:7700
+    environment:
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
+
+volumes:
+  db_data:
