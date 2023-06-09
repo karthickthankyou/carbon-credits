@@ -11,6 +11,7 @@ type Inventory {
   balance: Int!
   price: Int!
   forSale: Boolean!
+  project: Project
 }
 
 """
@@ -22,14 +23,15 @@ type Project {
   id: Int!
   name: String!
   owner: String!
+  verifiers: [Verifier!]
+  inventories: [Inventory!]
+  transfers: [Transfer!]
+  retirements: [Retirement!]
 }
 
-type Retirement {
-  id: Int!
-  timestamp: DateTime!
-  projectId: Int!
-  retiree: String!
-  quantity: Int!
+type Verifier {
+  address: String!
+  projects: [Project!]
 }
 
 type Transfer {
@@ -39,10 +41,16 @@ type Transfer {
   from: String!
   to: String!
   quantity: Int!
+  project: Project
 }
 
-type Verifier {
-  address: String!
+type Retirement {
+  id: Int!
+  timestamp: DateTime!
+  projectId: Int!
+  retiree: String!
+  quantity: Int!
+  project: Project
 }
 
 type Query {
