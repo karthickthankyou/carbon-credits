@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { Prisma } from '@prisma/client'
 import {
+  FloatFilter,
   IntFilter,
   RestrictProperties,
   StringFilter,
@@ -23,6 +24,10 @@ export class ProjectWhereUniqueInput
 export class ProjectWhereInput
   implements RestrictProperties<ProjectWhereInput, Prisma.ProjectWhereInput>
 {
+  @Field(() => FloatFilter, { nullable: true })
+  lat: FloatFilter
+  @Field(() => FloatFilter, { nullable: true })
+  lng: FloatFilter
   @Field(() => IntFilter, { nullable: true })
   price: IntFilter
   @Field(() => IntFilter, { nullable: true })

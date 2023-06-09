@@ -8,7 +8,7 @@ export default {
 } as ComponentMeta<typeof CreateProject>
 
 const Template: ComponentStory<typeof CreateProject> = (args) => (
-  <CreateProject {...args} />
+  <CreateProject />
 )
 
 export const Primary = Template.bind({})

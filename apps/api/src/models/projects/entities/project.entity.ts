@@ -9,6 +9,8 @@ export class Project implements RestrictProperties<Project, ProjectType> {
   price: number
   balance: number
   owner: string
+  lat: number
+  lng: number
   // Todo fill all properties. To make it nullable add below.
   // @Field(() => String, { nullable: true })
 }

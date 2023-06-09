@@ -29,6 +29,8 @@ type Project {
   price: Int!
   balance: Int!
   owner: String!
+  lat: Int!
+  lng: Int!
   verifiers: [Verifier!]
   inventories: [Inventory!]
   transfers: [Transfer!]
@@ -140,6 +142,8 @@ input ProjectRelationFilter {
 }
 
 input ProjectWhereInput {
+  lat: FloatFilter
+  lng: FloatFilter
   price: IntFilter
   balance: IntFilter
   id: IntFilter
@@ -152,6 +156,17 @@ input ProjectWhereInput {
   AND: [ProjectWhereInput!]
   OR: [ProjectWhereInput!]
   NOT: [ProjectWhereInput!]
+}
+
+input FloatFilter {
+  equals: Float
+  in: Float
+  notIn: Float
+  lt: Float
+  lte: Float
+  gt: Float
+  gte: Float
+  not: Float
 }
 
 input VerifierListRelationFilter {
@@ -235,6 +250,8 @@ enum SortOrder {
 }
 
 input ProjectOrderByWithRelationInput {
+  lat: SortOrder
+  lng: SortOrder
   price: SortOrder
   balance: SortOrder
   id: SortOrder
@@ -293,6 +310,8 @@ enum ProjectScalarFieldEnum {
   owner
   price
   balance
+  lat
+  lng
 }
 
 input RetirementOrderByWithRelationInput {

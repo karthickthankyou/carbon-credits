@@ -25,12 +25,25 @@ contract CarbonCredits is Initializable {
         uint256 price;
     }
 
+    struct ProjectLocation {
+        int256 latitude;
+        int256 longitude;
+    }
+
     Project[] public projects;
     mapping(uint256 => address[]) public projectVerifiers;
     mapping(address => bool) public verifiers;
     mapping(address => mapping(uint256 => Inventory)) public inventories;
+    mapping(uint256 => ProjectLocation) public projectLocations; // new mapping for project locations
 
-    event ProjectCreated(uint256 projectId, string name, address owner);
+    event ProjectCreated(
+        address owner,
+        uint256 projectId,
+        string name,
+        int256 latitude,
+        int256 longitude,
+        uint256 price
+    );
     event ProjectVerified(uint256 projectId, address verifier);
     event CreditsTransferred(
         uint256 projectId,
@@ -46,11 +59,24 @@ contract CarbonCredits is Initializable {
         bool forSale
     );
 
-    function createProject(string memory _name, uint256 _price) public {
+    function createProject(
+        string memory _name,
+        uint256 _price,
+        int256 _latitude,
+        int256 _longitude
+    ) public {
         uint256 projectId = projects.length;
         projects.push(Project(_name, msg.sender, false, 0, _price));
+        projectLocations[projectId] = ProjectLocation(_latitude, _longitude); // save the location in the new mapping
 
-        emit ProjectCreated(projectId, _name, msg.sender);
+        emit ProjectCreated(
+            msg.sender,
+            projectId,
+            _name,
+            _latitude,
+            _longitude,
+            _price
+        );
     }
 
     function verifyProject(uint256 projectId) public {

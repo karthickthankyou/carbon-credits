@@ -3,7 +3,9 @@ import Web3 from 'web3'
 import * as dotenv from 'dotenv'
 import { abi, contractAddress } from 'src/util/celo'
 import { AbiItem } from 'web3-utils'
-
+import { PrismaService } from 'src/common/prisma/prisma.service'
+import { MeilisearchService } from 'src/meilisearch/meilisearch.service'
+import { intToCoords } from 'src/util'
 dotenv.config()
 
 @Injectable()
@@ -11,9 +13,12 @@ export class CeloService {
   private readonly web3: Web3
   private readonly contract: any
 
-  constructor() {
-    console.log('WSS_URL ', process.env.WSS_URL)
-    this.web3 = new Web3(process.env.WSS_URL)
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly meili: MeilisearchService,
+  ) {
+    console.log('WSS_URL ', process.env.WSS_CELO)
+    this.web3 = new Web3(process.env.WSS_CELO)
 
     this.contract = new this.web3.eth.Contract(
       abi as AbiItem[],
@@ -48,6 +53,21 @@ export class CeloService {
           fromBlock: 'latest',
         },
         async (error, event) => {
+          const { owner, projectId, name, latitude, longitude, price } =
+            event.returnValues
+          const project = await this.prisma.project.create({
+            data: {
+              balance: 0,
+              id: +projectId,
+              name,
+              owner,
+              price: +price,
+              lat: intToCoords(+latitude),
+              lng: intToCoords(+longitude),
+            },
+          })
+
+          await this.meili.addToIndex([{ id: project.id, name }])
           console.log(event)
         },
       )

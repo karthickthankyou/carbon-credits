@@ -9,26 +9,19 @@ export type ActionType<T = string> = {
 export type CreateProjectPayload = {
   name: string
   price: number
+  latitude: number
+  longitude: number
 }
 
 export async function createProject({
   contract,
   account,
-  payload,
+  payload: { name, price, latitude, longitude },
 }: ActionType<CreateProjectPayload>): Promise<void> {
   try {
-    // Check if the project exists using call
-    const project = await contract.methods.projects(payload.name).call()
-
-    // Check the length of the project name to verify its existence
-    if (project.name) {
-      alert('Project already exists!')
-      return
-    }
-
-    // If the project doesn't exist, then create it using send
+    console.log({ name, price, latitude, longitude })
     await contract.methods
-      .createProject(payload.name, payload.price)
+      .createProject(name, price, latitude, longitude)
       .send({ from: account })
   } catch (error) {
     console.error(error)

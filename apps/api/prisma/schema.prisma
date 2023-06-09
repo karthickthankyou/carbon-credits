@@ -16,6 +16,8 @@ model Project {
     owner   String
     price   Int
     balance Int
+    lat     Float
+    lng     Float
 
     verifiers   Verifier[]
     inventories Inventory[]
