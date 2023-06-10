@@ -34,7 +34,7 @@ export async function createProject({
     return false
   } catch (error) {
     console.error(error)
-    return false
+    throw error
   }
 }
 
@@ -53,7 +53,30 @@ export async function addVerifier({
     return false
   } catch (error) {
     console.error(error)
+    throw error
+  }
+}
+
+export async function addCredits({
+  contract,
+  account,
+  payload: { projectId, quantity, price },
+}: ActionType<{
+  projectId: number
+  quantity: number
+  price: number
+}>): Promise<boolean> {
+  try {
+    const result = await contract.methods
+      .addCredits(projectId, quantity, price)
+      .send({ from: account })
+    if (result.status) {
+      return true
+    }
     return false
+  } catch (error) {
+    console.error(error)
+    throw error
   }
 }
 
@@ -72,7 +95,7 @@ export async function verifyProject({
     return false
   } catch (error) {
     console.error(error)
-    return false
+    throw error
   }
 }
 
@@ -93,6 +116,6 @@ export async function buyCredits({
     return false
   } catch (error) {
     console.error(error)
-    return false
+    throw error
   }
 }

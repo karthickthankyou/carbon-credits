@@ -74,6 +74,13 @@ export class ProjectsResolver {
     })
   }
 
+  @ResolveField(() => Number, { nullable: true })
+  verified(@Parent() parent: Project) {
+    return this.prisma.verifier.count({
+      where: { projects: { some: { id: parent.id } } },
+    })
+  }
+
   @ResolveField(() => [Inventory], { nullable: true })
   inventories(@Parent() parent: Project) {
     return this.prisma.inventory.findMany({

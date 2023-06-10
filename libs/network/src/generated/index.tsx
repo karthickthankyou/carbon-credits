@@ -167,6 +167,7 @@ export type Project = {
   owner: Scalars['String']
   retirements?: Maybe<Array<Retirement>>
   transfers?: Maybe<Array<Transfer>>
+  verified?: Maybe<Scalars['Int']>
   verifiers?: Maybe<Array<Verifier>>
 }
 
@@ -509,6 +510,7 @@ export type ProjectFragmentFragment = {
   owner: string
   lat?: number | null
   lng?: number | null
+  verified?: number | null
   verifiers?: Array<{ __typename?: 'Verifier'; address: string }> | null
 }
 
@@ -533,6 +535,7 @@ export type ProjectsQuery = {
     owner: string
     lat?: number | null
     lng?: number | null
+    verified?: number | null
     verifiers?: Array<{ __typename?: 'Verifier'; address: string }> | null
   }>
   projectsCount: { __typename?: 'AggregateCountOutput'; count: number }
@@ -558,6 +561,7 @@ export type SearchProjectsQuery = {
     owner: string
     lat?: number | null
     lng?: number | null
+    verified?: number | null
     verifiers?: Array<{ __typename?: 'Verifier'; address: string }> | null
   }>
 }
@@ -624,6 +628,7 @@ export const ProjectFragmentFragmentDoc = /*#__PURE__*/ gql`
     owner
     lat
     lng
+    verified
     verifiers {
       address
     }

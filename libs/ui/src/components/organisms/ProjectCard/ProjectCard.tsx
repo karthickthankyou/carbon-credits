@@ -3,6 +3,13 @@ import { PlainButton } from '../../atoms/PlainButton'
 import { useAccount } from '@carbon-credits/hooks/web3'
 import { memo, useState } from 'react'
 import { Dialog } from '../../atoms/Dialog'
+import { userFormAddCredits } from '@carbon-credits/forms/src/addCredits'
+import { Form } from '../../atoms/Form'
+import { HtmlLabel } from '../../atoms/HtmlLabel'
+import { HtmlInput } from '../../atoms/HtmlInput'
+import { Button } from '../../atoms/Button'
+import { useAsync } from '@carbon-credits/hooks/async'
+import { addCredits } from '@carbon-credits/contract-utilities'
 
 export type ProjectQuery = ProjectsQuery['projects'][number]
 
@@ -19,12 +26,15 @@ export const ProjectCard = memo(({ project }: IProjectCardProps) => {
   return (
     <div>
       <div
-        className="flex flex-col items-center gap-1 bg-white rounded-full "
+        className="flex flex-col items-center justify-start gap-1 p-2 bg-white "
         key={project.id}
       >
-        <div className="flex justify-center w-full ">
+        <div className="flex flex-col justify-center w-full ">
           <div>{project.name}</div>
-
+          <span className="px-1 rounded bg-primary">{project.verified}</span>
+          {project.owner === account && project.verified ? (
+            <AddCreditsDialog project={project} />
+          ) : null}
           <PlainButton>Buy</PlainButton>
         </div>
       </div>
@@ -35,10 +45,71 @@ export const ProjectCard = memo(({ project }: IProjectCardProps) => {
   )
 })
 
+export const AddCreditsDialog = ({ project }: IProjectCardProps) => {
+  const [open, setOpen] = useState(false)
+  const { account, contract, isOwner } = useAccount()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = userFormAddCredits()
+  const [{ data, loading, error }, addCreditsFunction] = useAsync(addCredits)
+  return (
+    <>
+      <PlainButton
+        className="text-sm underline underline-offset-4"
+        onClick={() => setOpen(true)}
+      >
+        Add credits
+      </PlainButton>
+      <Dialog open={open} setOpen={setOpen} title={'Owners'}>
+        <Form
+          onSubmit={handleSubmit(async ({ quantity, price }) => {
+            console.log('data ', { quantity })
+
+            if (!contract) {
+              return
+            }
+
+            await addCreditsFunction({
+              account,
+              contract,
+              payload: { projectId: project.id, quantity, price },
+            })
+          })}
+        >
+          <HtmlLabel error={errors.quantity?.message} title="Quantity">
+            <HtmlInput
+              placeholder="Quantity"
+              {...register('quantity', { valueAsNumber: true })}
+            />
+          </HtmlLabel>
+          <HtmlLabel error={errors.price?.message} title="Price">
+            <HtmlInput
+              placeholder="Price"
+              {...register('price', { valueAsNumber: true })}
+            />
+          </HtmlLabel>
+          <Button loading={loading} type="submit">
+            Add credits
+          </Button>
+        </Form>
+        {data ? <div>Credits added successfully. 🎉🎉🎉</div> : null}
+        {error ? (
+          <div className="mt-1 text-sm text-red-800">
+            Error for developers: {error}
+          </div>
+        ) : null}
+      </Dialog>
+    </>
+  )
+}
+
 export const OwnerDialog = ({ name }: { name: string }) => {
   const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
   const { account, contract, isOwner } = useAccount()
+  const [loading, setLoading] = useState(false)
+
   return (
     <>
       <PlainButton

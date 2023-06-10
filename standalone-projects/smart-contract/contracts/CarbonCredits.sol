@@ -39,7 +39,12 @@ contract CarbonCredits is Initializable {
     event VerifierAdded(address verifier);
 
     event ProjectVerified(uint256 projectId, address verifier);
-    event CreditsAdded(uint256 projectId, address owner, uint256 quantity);
+    event CreditsAdded(
+        uint256 projectId,
+        address owner,
+        uint256 quantity,
+        uint256 price
+    );
     event CreditsTransferred(
         uint256 projectId,
         address from,
@@ -114,7 +119,12 @@ contract CarbonCredits is Initializable {
         senderInventory.credits += quantity;
         senderInventory.price = price;
 
-        emit CreditsAdded(projectId, msg.sender, quantity);
+        emit CreditsAdded(
+            projectId,
+            msg.sender,
+            quantity,
+            senderInventory.price
+        );
         emit InventoryUpdated(
             projectId,
             msg.sender,

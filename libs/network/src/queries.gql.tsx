@@ -7,6 +7,7 @@ export const ProjectFragment = gql`
     owner
     lat
     lng
+    verified
     verifiers {
       address
     }

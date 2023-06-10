@@ -21,11 +21,23 @@ model Project {
     inventories Inventory[]
     transfers   Transfer[]
     retirements Retirement[]
+    creations   Creation[]
 }
 
 model Verifier {
     address  String    @id
     projects Project[]
+}
+
+model Creation {
+    id        Int      @id @default(autoincrement())
+    timestamp DateTime
+
+    projectId Int
+    project   Project @relation(fields: [projectId], references: [id])
+    user      String
+    price     Int
+    quantity  Int
 }
 
 model Transfer {

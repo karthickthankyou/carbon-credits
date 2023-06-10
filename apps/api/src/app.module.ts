@@ -13,6 +13,7 @@ import { VerifiersModule } from './models/verifiers/verifiers.module'
 import { PrismaModule } from './common/prisma/prisma.module'
 import { CeloModule } from './celo/celo.module'
 import { MeilisearchModule } from './meilisearch/meilisearch.module'
+import { CreationsModule } from './models/creations/creations.module'
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { MeilisearchModule } from './meilisearch/meilisearch.module'
     RetirementsModule,
     TransfersModule,
     VerifiersModule,
+    CreationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

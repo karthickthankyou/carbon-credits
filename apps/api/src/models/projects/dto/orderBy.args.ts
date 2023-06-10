@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { Prisma } from '@prisma/client'
 import { RestrictProperties } from 'src/common/dtos/common.input'
+import { CreationOrderByRelationAggregateInput } from 'src/models/creations/dto/orderBy.args'
 import { InventoryOrderByRelationAggregateInput } from 'src/models/inventories/dto/orderBy.args'
 import { RetirementOrderByRelationAggregateInput } from 'src/models/retirements/dto/orderBy.args'
 import { TransferOrderByRelationAggregateInput } from 'src/models/transfers/dto/orderBy.args'
@@ -14,6 +15,8 @@ export class ProjectOrderByWithRelationInput
       Prisma.ProjectOrderByWithRelationInput
     >
 {
+  @Field(() => CreationOrderByRelationAggregateInput, { nullable: true })
+  Creation: CreationOrderByRelationAggregateInput
   @Field(() => Prisma.SortOrder, { nullable: true })
   lat: Prisma.SortOrder
   @Field(() => Prisma.SortOrder, { nullable: true })

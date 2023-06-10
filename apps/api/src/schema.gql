@@ -30,6 +30,7 @@ type Project {
   name: String!
   owner: String!
   verifiers: [Verifier!]
+  verified: Int
   inventories: [Inventory!]
   transfers: [Transfer!]
   retirements: [Retirement!]
@@ -59,6 +60,15 @@ type Retirement {
   project: Project
 }
 
+type Creation {
+  id: Int!
+  timestamp: DateTime!
+  projectId: Int!
+  user: String!
+  price: Int!
+  quantity: Int!
+}
+
 type Query {
   inventories(where: InventoryWhereInput, orderBy: [InventoryOrderByWithRelationInput!], cursor: InventoryWhereUniqueInput, take: Int, skip: Int, distinct: [InventoryScalarFieldEnum!]): [Inventory!]!
   inventory(where: InventoryWhereUniqueInput): Inventory!
@@ -74,6 +84,8 @@ type Query {
   verifiers(where: VerifierWhereInput, orderBy: [VerifierOrderByWithRelationInput!], cursor: VerifierWhereUniqueInput, take: Int, skip: Int, distinct: [VerifierScalarFieldEnum!]): [Verifier!]!
   verifiersCount(where: VerifierWhereInput): AggregateCountOutput!
   verifier(where: VerifierWhereUniqueInput): Verifier!
+  creations(where: CreationWhereInput, orderBy: [CreationOrderByWithRelationInput!], cursor: CreationWhereUniqueInput, take: Int, skip: Int, distinct: [CreationScalarFieldEnum!]): [Creation!]!
+  creation(where: CreationWhereUniqueInput): Creation!
 }
 
 input InventoryWhereInput {
@@ -143,6 +155,7 @@ input ProjectRelationFilter {
 }
 
 input ProjectWhereInput {
+  Creation: CreationListRelationFilter
   lat: FloatFilter
   lng: FloatFilter
   id: IntFilter
@@ -155,6 +168,25 @@ input ProjectWhereInput {
   AND: [ProjectWhereInput!]
   OR: [ProjectWhereInput!]
   NOT: [ProjectWhereInput!]
+}
+
+input CreationListRelationFilter {
+  every: CreationWhereInput
+  some: CreationWhereInput
+  none: CreationWhereInput
+}
+
+input CreationWhereInput {
+  id: IntFilter
+  timestamp: DateTimeFilter
+  projectId: IntFilter
+  user: StringFilter
+  price: IntFilter
+  quantity: IntFilter
+  project: ProjectRelationFilter
+  AND: [CreationWhereInput!]
+  OR: [CreationWhereInput!]
+  NOT: [CreationWhereInput!]
 }
 
 input FloatFilter {
@@ -249,6 +281,7 @@ enum SortOrder {
 }
 
 input ProjectOrderByWithRelationInput {
+  Creation: CreationOrderByRelationAggregateInput
   lat: SortOrder
   lng: SortOrder
   id: SortOrder
@@ -258,6 +291,10 @@ input ProjectOrderByWithRelationInput {
   inventories: InventoryOrderByRelationAggregateInput
   transfers: TransferOrderByRelationAggregateInput
   retirements: RetirementOrderByRelationAggregateInput
+}
+
+input CreationOrderByRelationAggregateInput {
+  _count: SortOrder
 }
 
 input VerifierOrderByRelationAggregateInput {
@@ -375,6 +412,29 @@ input VerifierWhereUniqueInput {
 
 enum VerifierScalarFieldEnum {
   address
+}
+
+input CreationOrderByWithRelationInput {
+  id: SortOrder
+  timestamp: SortOrder
+  projectId: SortOrder
+  user: SortOrder
+  price: SortOrder
+  quantity: SortOrder
+  project: ProjectOrderByWithRelationInput
+}
+
+input CreationWhereUniqueInput {
+  id: Int
+}
+
+enum CreationScalarFieldEnum {
+  id
+  timestamp
+  projectId
+  user
+  price
+  quantity
 }
 
 type Mutation {

@@ -6,6 +6,7 @@ import {
   RestrictProperties,
   StringFilter,
 } from 'src/common/dtos/common.input'
+import { CreationListRelationFilter } from 'src/models/creations/dto/where.args'
 import { InventoryListRelationFilter } from 'src/models/inventories/dto/where.args'
 import { RetirementListRelationFilter } from 'src/models/retirements/dto/where.args'
 import { TransferListRelationFilter } from 'src/models/transfers/dto/where.args'
@@ -24,6 +25,8 @@ export class ProjectWhereUniqueInput
 export class ProjectWhereInput
   implements RestrictProperties<ProjectWhereInput, Prisma.ProjectWhereInput>
 {
+  @Field(() => CreationListRelationFilter, { nullable: true })
+  Creation: CreationListRelationFilter
   @Field(() => FloatFilter, { nullable: true })
   lat: FloatFilter
   @Field(() => FloatFilter, { nullable: true })

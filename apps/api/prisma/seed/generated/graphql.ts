@@ -166,6 +166,7 @@ export type Project = {
   owner: Scalars['String']
   retirements?: Maybe<Array<Retirement>>
   transfers?: Maybe<Array<Transfer>>
+  verified?: Maybe<Scalars['Int']>
   verifiers?: Maybe<Array<Verifier>>
 }
 

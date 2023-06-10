@@ -123,12 +123,21 @@ export class CeloService {
           fromBlock: 'latest',
         },
         async (error, event) => {
-          const { projectId, owner, quantity } = event.returnValues
-          const inventoryUpdate = await this.prisma.inventory.update({
-            where: { user_projectId: { projectId, user: owner } },
-            data: { balance: { increment: quantity } },
+          console.log('   ---   CreditsAdded', event.returnValues)
+          const { projectId, owner, quantity, price } = event.returnValues
+          const block = await this.web3.eth.getBlock(event.blockNumber)
+          const timestamp = block.timestamp
+          const createdCredits = await this.prisma.creation.create({
+            data: {
+              price: Number(price),
+              quantity: Number(quantity),
+              timestamp: new Date(timestamp),
+              user: owner,
+              projectId: Number(projectId),
+            },
           })
-          console.log('CreditsAdded ', inventoryUpdate)
+
+          console.log('CreditsAdded ', createdCredits)
         },
       )
       .on('connected', (str) =>
@@ -194,6 +203,7 @@ export class CeloService {
           fromBlock: 'latest',
         },
         async (error, event) => {
+          console.log('   ---   InventoryUpdated', event.returnValues)
           if (error) {
             console.error('Error on InventoryUpdated event', error)
             return
@@ -201,9 +211,15 @@ export class CeloService {
           const { projectId, user, price, balance, forSale } =
             event.returnValues
           const inventoryUpdated = await this.prisma.inventory.upsert({
-            create: { balance, forSale, price, user, projectId },
-            update: { balance, forSale, price },
-            where: { user_projectId: { projectId, user } },
+            create: {
+              user,
+              projectId: Number(projectId),
+              price: Number(price),
+              forSale,
+              balance: Number(balance),
+            },
+            update: { balance: Number(balance), forSale, price: Number(price) },
+            where: { user_projectId: { projectId: Number(projectId), user } },
           })
 
           console.log('inventoryUpdated ', inventoryUpdated)
