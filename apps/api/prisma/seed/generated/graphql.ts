@@ -238,6 +238,7 @@ export type Query = {
   transfers: Array<Transfer>
   verifier: Verifier
   verifiers: Array<Verifier>
+  verifiersCount: AggregateCountOutput
 }
 
 export type QueryInventoriesArgs = {
@@ -321,6 +322,10 @@ export type QueryVerifiersArgs = {
   orderBy?: InputMaybe<Array<VerifierOrderByWithRelationInput>>
   skip?: InputMaybe<Scalars['Int']>
   take?: InputMaybe<Scalars['Int']>
+  where?: InputMaybe<VerifierWhereInput>
+}
+
+export type QueryVerifiersCountArgs = {
   where?: InputMaybe<VerifierWhereInput>
 }
 

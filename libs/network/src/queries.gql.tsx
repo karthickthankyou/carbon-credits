@@ -92,3 +92,28 @@ export const inventories = gql`
     }
   }
 `
+
+export const verifiers = gql`
+  query verifiers(
+    $distinct: [VerifierScalarFieldEnum!]
+    $skip: Int
+    $take: Int
+    $cursor: VerifierWhereUniqueInput
+    $orderBy: [VerifierOrderByWithRelationInput!]
+    $where: VerifierWhereInput
+  ) {
+    verifiers(
+      distinct: $distinct
+      skip: $skip
+      take: $take
+      cursor: $cursor
+      orderBy: $orderBy
+      where: $where
+    ) {
+      address
+    }
+    verifiersCount(where: $where) {
+      count
+    }
+  }
+`

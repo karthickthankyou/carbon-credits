@@ -34,6 +34,19 @@ export async function createProject({
   }
 }
 
+export async function addVerifier({
+  contract,
+  account,
+  payload: { verifier },
+}: ActionType<{ verifier: string }>): Promise<void> {
+  try {
+    console.log({ verifier })
+    await contract.methods.addVerifier(verifier).send({ from: account })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 export async function buyCredits({
   contract,
   account,

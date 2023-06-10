@@ -239,6 +239,7 @@ export type Query = {
   transfers: Array<Transfer>
   verifier: Verifier
   verifiers: Array<Verifier>
+  verifiersCount: AggregateCountOutput
 }
 
 export type QueryInventoriesArgs = {
@@ -322,6 +323,10 @@ export type QueryVerifiersArgs = {
   orderBy?: InputMaybe<Array<VerifierOrderByWithRelationInput>>
   skip?: InputMaybe<Scalars['Int']>
   take?: InputMaybe<Scalars['Int']>
+  where?: InputMaybe<VerifierWhereInput>
+}
+
+export type QueryVerifiersCountArgs = {
   where?: InputMaybe<VerifierWhereInput>
 }
 
@@ -582,11 +587,31 @@ export type InventoriesQuery = {
   inventoriesCount: { __typename?: 'AggregateCountOutput'; count: number }
 }
 
+export type VerifiersQueryVariables = Exact<{
+  distinct?: InputMaybe<
+    Array<VerifierScalarFieldEnum> | VerifierScalarFieldEnum
+  >
+  skip?: InputMaybe<Scalars['Int']>
+  take?: InputMaybe<Scalars['Int']>
+  cursor?: InputMaybe<VerifierWhereUniqueInput>
+  orderBy?: InputMaybe<
+    Array<VerifierOrderByWithRelationInput> | VerifierOrderByWithRelationInput
+  >
+  where?: InputMaybe<VerifierWhereInput>
+}>
+
+export type VerifiersQuery = {
+  __typename?: 'Query'
+  verifiers: Array<{ __typename?: 'Verifier'; address: string }>
+  verifiersCount: { __typename?: 'AggregateCountOutput'; count: number }
+}
+
 export const namedOperations = {
   Query: {
     projects: 'projects',
     searchProjects: 'searchProjects',
     inventories: 'inventories',
+    verifiers: 'verifiers',
   },
   Fragment: {
     ProjectFragment: 'ProjectFragment',
@@ -842,4 +867,82 @@ export type InventoriesLazyQueryHookResult = ReturnType<
 export type InventoriesQueryResult = Apollo.QueryResult<
   InventoriesQuery,
   InventoriesQueryVariables
+>
+export const VerifiersDocument = /*#__PURE__*/ gql`
+  query verifiers(
+    $distinct: [VerifierScalarFieldEnum!]
+    $skip: Int
+    $take: Int
+    $cursor: VerifierWhereUniqueInput
+    $orderBy: [VerifierOrderByWithRelationInput!]
+    $where: VerifierWhereInput
+  ) {
+    verifiers(
+      distinct: $distinct
+      skip: $skip
+      take: $take
+      cursor: $cursor
+      orderBy: $orderBy
+      where: $where
+    ) {
+      address
+    }
+    verifiersCount(where: $where) {
+      count
+    }
+  }
+`
+
+/**
+ * __useVerifiersQuery__
+ *
+ * To run a query within a React component, call `useVerifiersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVerifiersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVerifiersQuery({
+ *   variables: {
+ *      distinct: // value for 'distinct'
+ *      skip: // value for 'skip'
+ *      take: // value for 'take'
+ *      cursor: // value for 'cursor'
+ *      orderBy: // value for 'orderBy'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useVerifiersQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    VerifiersQuery,
+    VerifiersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<VerifiersQuery, VerifiersQueryVariables>(
+    VerifiersDocument,
+    options,
+  )
+}
+export function useVerifiersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    VerifiersQuery,
+    VerifiersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<VerifiersQuery, VerifiersQueryVariables>(
+    VerifiersDocument,
+    options,
+  )
+}
+export type VerifiersQueryHookResult = ReturnType<typeof useVerifiersQuery>
+export type VerifiersLazyQueryHookResult = ReturnType<
+  typeof useVerifiersLazyQuery
+>
+export type VerifiersQueryResult = Apollo.QueryResult<
+  VerifiersQuery,
+  VerifiersQueryVariables
 >

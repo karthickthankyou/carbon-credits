@@ -72,6 +72,7 @@ type Query {
   transfers(where: TransferWhereInput, orderBy: [TransferOrderByWithRelationInput!], cursor: TransferWhereUniqueInput, take: Int, skip: Int, distinct: [TransferScalarFieldEnum!]): [Transfer!]!
   transfer(where: TransferWhereUniqueInput): Transfer!
   verifiers(where: VerifierWhereInput, orderBy: [VerifierOrderByWithRelationInput!], cursor: VerifierWhereUniqueInput, take: Int, skip: Int, distinct: [VerifierScalarFieldEnum!]): [Verifier!]!
+  verifiersCount(where: VerifierWhereInput): AggregateCountOutput!
   verifier(where: VerifierWhereUniqueInput): Verifier!
 }
 

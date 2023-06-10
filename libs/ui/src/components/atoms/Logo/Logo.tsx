@@ -1,13 +1,14 @@
 import { IconPlant, IconTree, IconTrees } from '@tabler/icons-react'
 import { ScrollText } from '../../molecules/ScrollText'
 import Link from 'next/link'
+import { PlantIcon } from '../PlantIcon'
 
 export interface ILogoProps {}
 
 export const Logo = ({}: ILogoProps) => {
   return (
     <div className="relative flex items-center gap-1 ">
-      <IconPlant className="text-primary w-7 h-7 p-0.5 border-2 border-black rounded-full" />
+      <PlantIcon />
 
       <div
         // style={{
