@@ -1,5 +1,30 @@
-export const contractAddress = '0xEfB5B8c2C1B6832836A551D413E3F8A9b2C14b4C'
+export const contractAddress = '0xb56DE44B1Cd2D786996ed0320754a30c259A44cF'
 export const abi = [
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'projectId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'quantity',
+        type: 'uint256',
+      },
+    ],
+    name: 'CreditsAdded',
+    type: 'event',
+  },
   {
     anonymous: false,
     inputs: [
@@ -87,6 +112,12 @@ export const abi = [
       {
         indexed: false,
         internalType: 'uint256',
+        name: 'price',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
         name: 'balance',
         type: 'uint256',
       },
@@ -124,20 +155,14 @@ export const abi = [
       {
         indexed: false,
         internalType: 'int256',
-        name: 'latitude',
+        name: 'lat',
         type: 'int256',
       },
       {
         indexed: false,
         internalType: 'int256',
-        name: 'longitude',
+        name: 'lng',
         type: 'int256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'price',
-        type: 'uint256',
       },
     ],
     name: 'ProjectCreated',
@@ -163,6 +188,19 @@ export const abi = [
     type: 'event',
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'verifier',
+        type: 'address',
+      },
+    ],
+    name: 'VerifierAdded',
+    type: 'event',
+  },
+  {
     inputs: [],
     name: 'COMMISSION_PERCENT',
     outputs: [
@@ -173,6 +211,42 @@ export const abi = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'projectId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'quantity',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'price',
+        type: 'uint256',
+      },
+    ],
+    name: 'addCredits',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'verifier',
+        type: 'address',
+      },
+    ],
+    name: 'addVerifier',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -206,18 +280,13 @@ export const abi = [
         type: 'string',
       },
       {
-        internalType: 'uint256',
-        name: '_price',
-        type: 'uint256',
-      },
-      {
         internalType: 'int256',
-        name: '_latitude',
+        name: '_lat',
         type: 'int256',
       },
       {
         internalType: 'int256',
-        name: '_longitude',
+        name: '_lng',
         type: 'int256',
       },
     ],
@@ -250,18 +319,18 @@ export const abi = [
     outputs: [
       {
         internalType: 'uint256',
-        name: 'quantity',
+        name: 'price',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'credits',
         type: 'uint256',
       },
       {
         internalType: 'bool',
         name: 'forSale',
         type: 'bool',
-      },
-      {
-        internalType: 'uint256',
-        name: 'price',
-        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -275,30 +344,6 @@ export const abi = [
         internalType: 'address payable',
         name: '',
         type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: 'projectLocations',
-    outputs: [
-      {
-        internalType: 'int256',
-        name: 'latitude',
-        type: 'int256',
-      },
-      {
-        internalType: 'int256',
-        name: 'longitude',
-        type: 'int256',
       },
     ],
     stateMutability: 'view',
@@ -339,29 +384,24 @@ export const abi = [
     name: 'projects',
     outputs: [
       {
-        internalType: 'string',
-        name: 'name',
-        type: 'string',
-      },
-      {
         internalType: 'address',
         name: 'owner',
         type: 'address',
       },
       {
-        internalType: 'bool',
-        name: 'verified',
-        type: 'bool',
+        internalType: 'string',
+        name: 'name',
+        type: 'string',
       },
       {
-        internalType: 'uint256',
-        name: 'totalCredits',
-        type: 'uint256',
+        internalType: 'int256',
+        name: 'lat',
+        type: 'int256',
       },
       {
-        internalType: 'uint256',
-        name: 'price',
-        type: 'uint256',
+        internalType: 'int256',
+        name: 'lng',
+        type: 'int256',
       },
     ],
     stateMutability: 'view',

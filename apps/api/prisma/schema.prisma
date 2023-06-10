@@ -11,13 +11,11 @@ datasource db {
 }
 
 model Project {
-    id      Int    @id
-    name    String
-    owner   String
-    price   Int
-    balance Int
-    lat     Float
-    lng     Float
+    id    Int    @id
+    name  String
+    owner String
+    lat   Float
+    lng   Float
 
     verifiers   Verifier[]
     inventories Inventory[]

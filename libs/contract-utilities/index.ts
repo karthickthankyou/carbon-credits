@@ -1,4 +1,5 @@
 import { Contract } from 'web3-eth-contract'
+import Web3 from 'web3'
 
 export type ActionType<T = string> = {
   contract: Contract
@@ -8,21 +9,43 @@ export type ActionType<T = string> = {
 
 export type CreateProjectPayload = {
   name: string
+  lat: number
+  lng: number
+}
+
+export type BuyCreditsPayload = {
+  projectId: number
+  quantity: number
   price: number
-  latitude: number
-  longitude: number
 }
 
 export async function createProject({
   contract,
   account,
-  payload: { name, price, latitude, longitude },
+  payload: { name, lat, lng },
 }: ActionType<CreateProjectPayload>): Promise<void> {
   try {
-    console.log({ name, price, latitude, longitude })
+    console.log({ name, lat, lng })
     await contract.methods
-      .createProject(name, price, latitude, longitude)
+      .createProject(account, name, lat, lng)
       .send({ from: account })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export async function buyCredits({
+  contract,
+  account,
+  payload: { projectId, quantity, price },
+}: ActionType<BuyCreditsPayload>): Promise<void> {
+  try {
+    const totalCost = Web3.utils.toWei((quantity * price).toString(), 'kwei')
+
+    console.log({ projectId, account, quantity })
+    await contract.methods
+      .buyCredits(projectId, account, quantity)
+      .send({ from: account, value: totalCost })
   } catch (error) {
     console.error(error)
   }

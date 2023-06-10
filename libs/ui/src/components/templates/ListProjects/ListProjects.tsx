@@ -81,11 +81,9 @@ export const SortDropdown = ({
     onChange={(e) => handleSort(e.target.value)}
   >
     <option value="">Relevance</option>
-    <option value="name_ASC">A - Z</option>
-    <option value="name_DESC">Z - A</option>
-    <option value="upvotes_DESC">Upvotes &darr;</option>
-    <option value="upvotes_ASC">Upvotes &uarr;</option>
-    <option value="downvotes_DESC">Downvotes &darr;</option>
-    <option value="downvotes_ASC">Downvotes &uarr;</option>
+    <option value="price_DESC">Price &darr;</option>
+    <option value="price_ASC">Price &uarr;</option>
+    <option value="balance_DESC">Balance &darr;</option>
+    <option value="balance_ASC">Balance &uarr;</option>
   </HtmlSelect>
 )

@@ -5,7 +5,6 @@ import { z } from 'zod'
 
 export const schemaCreateProject = z.object({
   name: z.string(),
-  price: z.number(),
   location: z.object({
     latitude: z.number(),
     longitude: z.number(),

@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
-import { IconDoorExit, IconMenu2 } from '@tabler/icons-react'
+import { IconMenu2 } from '@tabler/icons-react'
 import { Sidebar } from '../Sidebar'
-import { Brand } from '../../atoms/Brand'
-import { Button } from '../../atoms/Button'
-import { MenuItem } from '../Header/Header'
+import { Logo } from '../../atoms/Logo'
 import { useAccount } from '@carbon-credits/hooks/web3'
+import { MenuItem } from '@carbon-credits/types'
 
 export interface INavSidebarProps {
   menuItems: MenuItem[]
@@ -28,7 +27,7 @@ export const NavSidebar = ({ menuItems }: INavSidebarProps) => {
       </button>
       <Sidebar open={open} setOpen={setOpen}>
         <Sidebar.Header>
-          <Brand shortForm />
+          <Logo />
         </Sidebar.Header>
         <Sidebar.Body>
           <div className="flex flex-col items-start space-y-1">
@@ -48,13 +47,14 @@ export const NavSidebar = ({ menuItems }: INavSidebarProps) => {
 }
 
 export const ShowMenuItems = ({ menuItems }: INavSidebarProps) => {
-  const { account } = useAccount()
+  const { account, isOwner } = useAccount()
 
   if (!account) return null
   return (
     <div className="items-center hidden ml-auto lg:flex lg:gap-10">
       {menuItems
-        .filter(({ loggedIn }) => !loggedIn || account)
+        .filter(({ loggedIn }) => (loggedIn ? Boolean(account) : true))
+        .filter(({ admin }) => (admin ? isOwner : true))
         .map(({ href, label }) => (
           <NavLink label={label} href={href} key={label} />
         ))}

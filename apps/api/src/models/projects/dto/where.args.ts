@@ -29,10 +29,6 @@ export class ProjectWhereInput
   @Field(() => FloatFilter, { nullable: true })
   lng: FloatFilter
   @Field(() => IntFilter, { nullable: true })
-  price: IntFilter
-  @Field(() => IntFilter, { nullable: true })
-  balance: IntFilter
-  @Field(() => IntFilter, { nullable: true })
   id: IntFilter
   @Field(() => StringFilter, { nullable: true })
   name: StringFilter

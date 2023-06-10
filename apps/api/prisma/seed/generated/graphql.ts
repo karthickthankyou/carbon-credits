@@ -42,6 +42,17 @@ export type DateTimeFilter = {
   notIn?: InputMaybe<Array<Scalars['String']>>
 }
 
+export type FloatFilter = {
+  equals?: InputMaybe<Scalars['Float']>
+  gt?: InputMaybe<Scalars['Float']>
+  gte?: InputMaybe<Scalars['Float']>
+  in?: InputMaybe<Scalars['Float']>
+  lt?: InputMaybe<Scalars['Float']>
+  lte?: InputMaybe<Scalars['Float']>
+  not?: InputMaybe<Scalars['Float']>
+  notIn?: InputMaybe<Scalars['Float']>
+}
+
 export type IntFilter = {
   equals?: InputMaybe<Scalars['Int']>
   gt?: InputMaybe<Scalars['Int']>
@@ -124,6 +135,13 @@ export type InventoryWhereUniqueInput = {
   user_projectId?: InputMaybe<InventoryUserProjectIdCompoundUniqueInput>
 }
 
+export type LocationFilterInput = {
+  nw_lat: Scalars['Float']
+  nw_lng: Scalars['Float']
+  se_lat: Scalars['Float']
+  se_lng: Scalars['Float']
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   findAll: Retirement
@@ -140,12 +158,12 @@ export type MutationFindAllArgs = {
 
 export type Project = {
   __typename?: 'Project'
-  balance: Scalars['Int']
   id: Scalars['Int']
   inventories?: Maybe<Array<Inventory>>
+  lat?: Maybe<Scalars['Float']>
+  lng?: Maybe<Scalars['Float']>
   name: Scalars['String']
   owner: Scalars['String']
-  price: Scalars['Int']
   retirements?: Maybe<Array<Retirement>>
   transfers?: Maybe<Array<Transfer>>
   verifiers?: Maybe<Array<Verifier>>
@@ -162,12 +180,12 @@ export type ProjectOrderByRelationAggregateInput = {
 }
 
 export type ProjectOrderByWithRelationInput = {
-  balance?: InputMaybe<SortOrder>
   id?: InputMaybe<SortOrder>
   inventories?: InputMaybe<InventoryOrderByRelationAggregateInput>
+  lat?: InputMaybe<SortOrder>
+  lng?: InputMaybe<SortOrder>
   name?: InputMaybe<SortOrder>
   owner?: InputMaybe<SortOrder>
-  price?: InputMaybe<SortOrder>
   retirements?: InputMaybe<RetirementOrderByRelationAggregateInput>
   transfers?: InputMaybe<TransferOrderByRelationAggregateInput>
   verifiers?: InputMaybe<VerifierOrderByRelationAggregateInput>
@@ -179,23 +197,23 @@ export type ProjectRelationFilter = {
 }
 
 export enum ProjectScalarFieldEnum {
-  Balance = 'balance',
   Id = 'id',
+  Lat = 'lat',
+  Lng = 'lng',
   Name = 'name',
   Owner = 'owner',
-  Price = 'price',
 }
 
 export type ProjectWhereInput = {
   AND?: InputMaybe<Array<ProjectWhereInput>>
   NOT?: InputMaybe<Array<ProjectWhereInput>>
   OR?: InputMaybe<Array<ProjectWhereInput>>
-  balance?: InputMaybe<IntFilter>
   id?: InputMaybe<IntFilter>
   inventories?: InputMaybe<InventoryListRelationFilter>
+  lat?: InputMaybe<FloatFilter>
+  lng?: InputMaybe<FloatFilter>
   name?: InputMaybe<StringFilter>
   owner?: InputMaybe<StringFilter>
-  price?: InputMaybe<IntFilter>
   retirements?: InputMaybe<RetirementListRelationFilter>
   transfers?: InputMaybe<TransferListRelationFilter>
   verifiers?: InputMaybe<VerifierListRelationFilter>
@@ -208,12 +226,14 @@ export type ProjectWhereUniqueInput = {
 export type Query = {
   __typename?: 'Query'
   inventories: Array<Inventory>
+  inventoriesCount: AggregateCountOutput
   inventory: Inventory
   project: Project
   projects: Array<Project>
   projectsCount: AggregateCountOutput
   retirement: Retirement
   retirements: Array<Retirement>
+  searchProjects: Array<Project>
   transfer: Transfer
   transfers: Array<Transfer>
   verifier: Verifier
@@ -226,6 +246,10 @@ export type QueryInventoriesArgs = {
   orderBy?: InputMaybe<Array<InventoryOrderByWithRelationInput>>
   skip?: InputMaybe<Scalars['Int']>
   take?: InputMaybe<Scalars['Int']>
+  where?: InputMaybe<InventoryWhereInput>
+}
+
+export type QueryInventoriesCountArgs = {
   where?: InputMaybe<InventoryWhereInput>
 }
 
@@ -262,6 +286,16 @@ export type QueryRetirementsArgs = {
   skip?: InputMaybe<Scalars['Int']>
   take?: InputMaybe<Scalars['Int']>
   where?: InputMaybe<RetirementWhereInput>
+}
+
+export type QuerySearchProjectsArgs = {
+  cursor?: InputMaybe<ProjectWhereUniqueInput>
+  distinct?: InputMaybe<Array<ProjectScalarFieldEnum>>
+  locationFilter: LocationFilterInput
+  orderBy?: InputMaybe<Array<ProjectOrderByWithRelationInput>>
+  skip?: InputMaybe<Scalars['Int']>
+  take?: InputMaybe<Scalars['Int']>
+  where?: InputMaybe<ProjectWhereInput>
 }
 
 export type QueryTransferArgs = {

@@ -1,11 +1,11 @@
 {
-  "name": "@autospace-org/util",
+  "name": "@carbon-credits/util",
   "version": "1.0.0",
   "main": "index.ts",
   "license": "MIT",
   "dependencies": {
-    "@autospace-org/network": "*",
-    "@autospace-org/types": "*",
+    "@carbon-credits/util": "*",
+    "@carbon-credits/network": "*",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.0",
     "jwt-decode": "^3.1.2",

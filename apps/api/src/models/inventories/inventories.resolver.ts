@@ -4,6 +4,8 @@ import { Inventory } from './entities/inventory.entity'
 import { FindManyInventoryArgs, FindUniqueInventoryArgs } from './dto/find.args'
 import { Project } from '../projects/entities/project.entity'
 import { PrismaService } from 'src/common/prisma/prisma.service'
+import { AggregateCountOutput } from 'src/common/dtos/common.input'
+import { InventoryWhereInput } from './dto/where.args'
 
 @Resolver(() => Inventory)
 export class InventoriesResolver {
@@ -20,6 +22,20 @@ export class InventoriesResolver {
   @Query(() => Inventory, { name: 'inventory' })
   findOne(@Args() args: FindUniqueInventoryArgs) {
     return this.inventoriesService.findOne(args)
+  }
+
+  @Query(() => AggregateCountOutput, {
+    name: 'inventoriesCount',
+  })
+  async inventoriesCount(
+    @Args('where', { nullable: true })
+    where: InventoryWhereInput,
+  ) {
+    const inventories = await this.prisma.inventory.aggregate({
+      _count: { _all: true },
+      where,
+    })
+    return { count: inventories._count._all }
   }
 
   @ResolveField(() => Project, { nullable: true })

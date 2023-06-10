@@ -1,15 +1,12 @@
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 import {
-  IconFloatCenter,
   IconMinus,
-  IconParking,
+  IconPlant,
   IconPlus,
-  IconSoup,
   TablerIconsProps,
 } from '@tabler/icons-react'
-import { LngLat, useMap } from 'react-map-gl'
-import { PlantIcon } from '../../../atoms/PlantIcon'
+import { useMap } from 'react-map-gl'
 
 export interface IZoomControlsProps {}
 
@@ -48,7 +45,7 @@ const ZoomOut = () => {
 
 export const CenterOfMap = ({
   onClick,
-  Icon = IconParking,
+  Icon = IconPlant,
 }: {
   onClick: (latLng: { lng: number; lat: number }) => void
   Icon?: (props: TablerIconsProps) => JSX.Element

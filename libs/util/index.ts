@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import axios from 'axios'
 import { format } from 'date-fns'
+import { MenuItem, ROLES } from '@carbon-credits/types'
 
 export type LatLng = {
   lat: number
@@ -93,3 +94,34 @@ export const getDistance = async (origin: LatLng, destination: LatLng) => {
     console.error(error)
   }
 }
+
+export const filterMenuItems = ({
+  roles,
+  menuItems,
+}: {
+  roles: ROLES
+  menuItems: MenuItem[]
+}) => {
+  return menuItems
+    .filter(({ loggedIn }) => (loggedIn ? roles.loggedIn : true))
+    .filter(({ admin }) => (admin ? roles.admin : true))
+    .filter(({ verifier }) => (verifier ? roles.verifier : true))
+}
+
+export const MENUITEMS: MenuItem[] = [
+  { label: 'About', href: '/about' },
+  { label: 'Inventory', href: '/inventory', loggedIn: true },
+  { label: 'Admin', href: '/admin', loggedIn: true, admin: true },
+  {
+    label: 'Verifier',
+    href: '/verifier',
+    loggedIn: true,
+    verifier: true,
+  },
+]
+export const SUBMENUITEMS: MenuItem[] = [
+  ...MENUITEMS,
+  { label: 'My projects', href: '/my-projects', loggedIn: true },
+  { label: 'Reports', href: '/reports', loggedIn: true },
+  { label: 'Settings', href: '/settings', loggedIn: false },
+]

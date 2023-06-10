@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
+    "@carbon-credits/network": "*",
     "@hookform/resolvers": "^3.0.1",
     "react-hook-form": "^7.43.9",
     "zod": "^3.21.4"

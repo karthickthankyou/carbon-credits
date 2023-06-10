@@ -12,39 +12,34 @@ contract CarbonCredits is Initializable {
     }
 
     struct Project {
-        string name;
         address owner;
-        bool verified;
-        uint256 totalCredits;
-        uint256 price;
+        string name;
+        int256 lat;
+        int256 lng;
     }
 
     struct Inventory {
-        uint256 quantity;
-        bool forSale;
         uint256 price;
-    }
-
-    struct ProjectLocation {
-        int256 latitude;
-        int256 longitude;
+        uint256 credits;
+        bool forSale;
     }
 
     Project[] public projects;
     mapping(uint256 => address[]) public projectVerifiers;
     mapping(address => bool) public verifiers;
     mapping(address => mapping(uint256 => Inventory)) public inventories;
-    mapping(uint256 => ProjectLocation) public projectLocations; // new mapping for project locations
 
     event ProjectCreated(
         address owner,
         uint256 projectId,
         string name,
-        int256 latitude,
-        int256 longitude,
-        uint256 price
+        int256 lat,
+        int256 lng
     );
+    event VerifierAdded(address verifier);
+
     event ProjectVerified(uint256 projectId, address verifier);
+    event CreditsAdded(uint256 projectId, address owner, uint256 quantity);
     event CreditsTransferred(
         uint256 projectId,
         address from,
@@ -55,28 +50,32 @@ contract CarbonCredits is Initializable {
     event InventoryUpdated(
         uint256 projectId,
         address user,
+        uint256 price,
         uint256 balance,
         bool forSale
     );
 
     function createProject(
         string memory _name,
-        uint256 _price,
-        int256 _latitude,
-        int256 _longitude
+        int256 _lat,
+        int256 _lng
     ) public {
         uint256 projectId = projects.length;
-        projects.push(Project(_name, msg.sender, false, 0, _price));
-        projectLocations[projectId] = ProjectLocation(_latitude, _longitude); // save the location in the new mapping
+        projects.push(Project(msg.sender, _name, _lat, _lng));
 
-        emit ProjectCreated(
-            msg.sender,
-            projectId,
-            _name,
-            _latitude,
-            _longitude,
-            _price
+        emit ProjectCreated(msg.sender, projectId, _name, _lat, _lng);
+    }
+
+    function addVerifier(address verifier) public {
+        require(
+            msg.sender == owner,
+            'Only the contract owner can add verifiers'
         );
+        require(!verifiers[verifier], 'The address is already a verifier');
+
+        verifiers[verifier] = true;
+
+        emit VerifierAdded(verifier);
     }
 
     function verifyProject(uint256 projectId) public {
@@ -85,14 +84,41 @@ contract CarbonCredits is Initializable {
             'Only registered verifiers can verify projects'
         );
         require(
-            !projects[projectId].verified,
+            projectVerifiers[projectId].length == 0,
             'The project is already verified'
         );
 
-        projects[projectId].verified = true;
         projectVerifiers[projectId].push(msg.sender);
 
         emit ProjectVerified(projectId, msg.sender);
+    }
+
+    function addCredits(
+        uint256 projectId,
+        uint256 quantity,
+        uint256 price
+    ) public {
+        require(
+            msg.sender == projects[projectId].owner,
+            'Only the project owner can add credits'
+        );
+        require(
+            projectVerifiers[projectId].length > 0,
+            'The project must be verified'
+        );
+
+        Inventory storage senderInventory = inventories[msg.sender][projectId];
+        senderInventory.credits += quantity;
+        senderInventory.price = price;
+
+        emit CreditsAdded(projectId, msg.sender, quantity);
+        emit InventoryUpdated(
+            projectId,
+            msg.sender,
+            senderInventory.price,
+            senderInventory.credits,
+            senderInventory.forSale
+        );
     }
 
     function buyCredits(
@@ -102,36 +128,38 @@ contract CarbonCredits is Initializable {
     ) public payable {
         Inventory storage sellerInventory = inventories[from][projectId];
         require(
-            sellerInventory.quantity >= quantity,
+            sellerInventory.credits >= quantity,
             'Not enough credits for sale'
         );
         require(sellerInventory.forSale, 'Credits are not for sale');
 
-        uint256 commission = calculateCommission(quantity);
-        uint256 totalCost = commission + quantity;
+        uint256 totalCost = sellerInventory.price * quantity;
+        uint256 commission = calculateCommission(totalCost);
         require(
-            msg.value >= totalCost,
+            msg.value >= totalCost + commission,
             'Not enough Ether sent to cover cost and commission'
         );
 
         // Transfer the commission to the owner and the cost to the seller
         payable(owner).transfer(commission);
-        payable(from).transfer(totalCost - commission);
+        payable(from).transfer(totalCost);
 
-        sellerInventory.quantity -= quantity;
-        inventories[msg.sender][projectId].quantity += quantity;
+        sellerInventory.credits -= quantity;
+        inventories[msg.sender][projectId].credits += quantity;
 
         emit CreditsTransferred(projectId, from, msg.sender, quantity);
         emit InventoryUpdated(
             projectId,
             from,
-            sellerInventory.quantity,
+            sellerInventory.price,
+            sellerInventory.credits,
             sellerInventory.forSale
         );
         emit InventoryUpdated(
             projectId,
             msg.sender,
-            inventories[msg.sender][projectId].quantity,
+            inventories[msg.sender][projectId].price,
+            inventories[msg.sender][projectId].credits,
             inventories[msg.sender][projectId].forSale
         );
     }
@@ -139,31 +167,34 @@ contract CarbonCredits is Initializable {
     function retireCredits(uint256 projectId, uint256 quantity) public payable {
         Inventory storage senderInventory = inventories[msg.sender][projectId];
         require(
-            senderInventory.quantity >= quantity,
+            senderInventory.credits >= quantity,
             'Not enough credits to retire'
         );
 
-        uint256 commission = calculateCommission(quantity);
+        uint256 commission = calculateCommission(
+            quantity * senderInventory.price
+        );
         require(
             msg.value >= commission,
             'Not enough Ether to cover commission'
         );
         owner.transfer(commission);
 
-        senderInventory.quantity -= quantity;
+        senderInventory.credits -= quantity;
 
         emit CreditsRetired(projectId, msg.sender, quantity);
         emit InventoryUpdated(
             projectId,
             msg.sender,
-            senderInventory.quantity,
+            senderInventory.price,
+            senderInventory.credits,
             senderInventory.forSale
         );
     }
 
     function calculateCommission(
-        uint256 quantity
+        uint256 totalCost
     ) private pure returns (uint256) {
-        return (quantity * COMMISSION_PERCENT) / 100;
+        return (totalCost * COMMISSION_PERCENT) / 100;
     }
 }

@@ -5,8 +5,8 @@ export const ProjectFragment = gql`
     id
     name
     owner
-    price
-    balance
+    lat
+    lng
     verifiers {
       address
     }
@@ -39,4 +39,56 @@ export const projects = gql`
     }
   }
   ${ProjectFragment}
+`
+
+export const searchProjects = gql`
+  query searchProjects(
+    $locationFilter: LocationFilterInput!
+    $where: ProjectWhereInput
+    $orderBy: [ProjectOrderByWithRelationInput!]
+    $take: Int
+    $skip: Int
+    $distinct: [ProjectScalarFieldEnum!]
+  ) {
+    searchProjects(
+      locationFilter: $locationFilter
+      where: $where
+      orderBy: $orderBy
+      take: $take
+      skip: $skip
+      distinct: $distinct
+    ) {
+      ...ProjectFragment
+    }
+  }
+`
+
+export const inventories = gql`
+  query inventories(
+    $distinct: [InventoryScalarFieldEnum!]
+    $skip: Int
+    $take: Int
+    $orderBy: [InventoryOrderByWithRelationInput!]
+    $where: InventoryWhereInput
+  ) {
+    inventories(
+      distinct: $distinct
+      skip: $skip
+      take: $take
+      orderBy: $orderBy
+      where: $where
+    ) {
+      id
+      price
+      balance
+      projectId
+      project {
+        id
+        name
+      }
+    }
+    inventoriesCount(where: $where) {
+      count
+    }
+  }
 `

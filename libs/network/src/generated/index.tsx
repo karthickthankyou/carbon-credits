@@ -43,6 +43,17 @@ export type DateTimeFilter = {
   notIn?: InputMaybe<Array<Scalars['String']>>
 }
 
+export type FloatFilter = {
+  equals?: InputMaybe<Scalars['Float']>
+  gt?: InputMaybe<Scalars['Float']>
+  gte?: InputMaybe<Scalars['Float']>
+  in?: InputMaybe<Scalars['Float']>
+  lt?: InputMaybe<Scalars['Float']>
+  lte?: InputMaybe<Scalars['Float']>
+  not?: InputMaybe<Scalars['Float']>
+  notIn?: InputMaybe<Scalars['Float']>
+}
+
 export type IntFilter = {
   equals?: InputMaybe<Scalars['Int']>
   gt?: InputMaybe<Scalars['Int']>
@@ -125,6 +136,13 @@ export type InventoryWhereUniqueInput = {
   user_projectId?: InputMaybe<InventoryUserProjectIdCompoundUniqueInput>
 }
 
+export type LocationFilterInput = {
+  nw_lat: Scalars['Float']
+  nw_lng: Scalars['Float']
+  se_lat: Scalars['Float']
+  se_lng: Scalars['Float']
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   findAll: Retirement
@@ -141,12 +159,12 @@ export type MutationFindAllArgs = {
 
 export type Project = {
   __typename?: 'Project'
-  balance: Scalars['Int']
   id: Scalars['Int']
   inventories?: Maybe<Array<Inventory>>
+  lat?: Maybe<Scalars['Float']>
+  lng?: Maybe<Scalars['Float']>
   name: Scalars['String']
   owner: Scalars['String']
-  price: Scalars['Int']
   retirements?: Maybe<Array<Retirement>>
   transfers?: Maybe<Array<Transfer>>
   verifiers?: Maybe<Array<Verifier>>
@@ -163,12 +181,12 @@ export type ProjectOrderByRelationAggregateInput = {
 }
 
 export type ProjectOrderByWithRelationInput = {
-  balance?: InputMaybe<SortOrder>
   id?: InputMaybe<SortOrder>
   inventories?: InputMaybe<InventoryOrderByRelationAggregateInput>
+  lat?: InputMaybe<SortOrder>
+  lng?: InputMaybe<SortOrder>
   name?: InputMaybe<SortOrder>
   owner?: InputMaybe<SortOrder>
-  price?: InputMaybe<SortOrder>
   retirements?: InputMaybe<RetirementOrderByRelationAggregateInput>
   transfers?: InputMaybe<TransferOrderByRelationAggregateInput>
   verifiers?: InputMaybe<VerifierOrderByRelationAggregateInput>
@@ -180,23 +198,23 @@ export type ProjectRelationFilter = {
 }
 
 export enum ProjectScalarFieldEnum {
-  Balance = 'balance',
   Id = 'id',
+  Lat = 'lat',
+  Lng = 'lng',
   Name = 'name',
   Owner = 'owner',
-  Price = 'price',
 }
 
 export type ProjectWhereInput = {
   AND?: InputMaybe<Array<ProjectWhereInput>>
   NOT?: InputMaybe<Array<ProjectWhereInput>>
   OR?: InputMaybe<Array<ProjectWhereInput>>
-  balance?: InputMaybe<IntFilter>
   id?: InputMaybe<IntFilter>
   inventories?: InputMaybe<InventoryListRelationFilter>
+  lat?: InputMaybe<FloatFilter>
+  lng?: InputMaybe<FloatFilter>
   name?: InputMaybe<StringFilter>
   owner?: InputMaybe<StringFilter>
-  price?: InputMaybe<IntFilter>
   retirements?: InputMaybe<RetirementListRelationFilter>
   transfers?: InputMaybe<TransferListRelationFilter>
   verifiers?: InputMaybe<VerifierListRelationFilter>
@@ -209,12 +227,14 @@ export type ProjectWhereUniqueInput = {
 export type Query = {
   __typename?: 'Query'
   inventories: Array<Inventory>
+  inventoriesCount: AggregateCountOutput
   inventory: Inventory
   project: Project
   projects: Array<Project>
   projectsCount: AggregateCountOutput
   retirement: Retirement
   retirements: Array<Retirement>
+  searchProjects: Array<Project>
   transfer: Transfer
   transfers: Array<Transfer>
   verifier: Verifier
@@ -227,6 +247,10 @@ export type QueryInventoriesArgs = {
   orderBy?: InputMaybe<Array<InventoryOrderByWithRelationInput>>
   skip?: InputMaybe<Scalars['Int']>
   take?: InputMaybe<Scalars['Int']>
+  where?: InputMaybe<InventoryWhereInput>
+}
+
+export type QueryInventoriesCountArgs = {
   where?: InputMaybe<InventoryWhereInput>
 }
 
@@ -263,6 +287,16 @@ export type QueryRetirementsArgs = {
   skip?: InputMaybe<Scalars['Int']>
   take?: InputMaybe<Scalars['Int']>
   where?: InputMaybe<RetirementWhereInput>
+}
+
+export type QuerySearchProjectsArgs = {
+  cursor?: InputMaybe<ProjectWhereUniqueInput>
+  distinct?: InputMaybe<Array<ProjectScalarFieldEnum>>
+  locationFilter: LocationFilterInput
+  orderBy?: InputMaybe<Array<ProjectOrderByWithRelationInput>>
+  skip?: InputMaybe<Scalars['Int']>
+  take?: InputMaybe<Scalars['Int']>
+  where?: InputMaybe<ProjectWhereInput>
 }
 
 export type QueryTransferArgs = {
@@ -468,8 +502,8 @@ export type ProjectFragmentFragment = {
   id: number
   name: string
   owner: string
-  price: number
-  balance: number
+  lat?: number | null
+  lng?: number | null
   verifiers?: Array<{ __typename?: 'Verifier'; address: string }> | null
 }
 
@@ -492,16 +526,67 @@ export type ProjectsQuery = {
     id: number
     name: string
     owner: string
-    price: number
-    balance: number
+    lat?: number | null
+    lng?: number | null
     verifiers?: Array<{ __typename?: 'Verifier'; address: string }> | null
   }>
   projectsCount: { __typename?: 'AggregateCountOutput'; count: number }
 }
 
+export type SearchProjectsQueryVariables = Exact<{
+  locationFilter: LocationFilterInput
+  where?: InputMaybe<ProjectWhereInput>
+  orderBy?: InputMaybe<
+    Array<ProjectOrderByWithRelationInput> | ProjectOrderByWithRelationInput
+  >
+  take?: InputMaybe<Scalars['Int']>
+  skip?: InputMaybe<Scalars['Int']>
+  distinct?: InputMaybe<Array<ProjectScalarFieldEnum> | ProjectScalarFieldEnum>
+}>
+
+export type SearchProjectsQuery = {
+  __typename?: 'Query'
+  searchProjects: Array<{
+    __typename?: 'Project'
+    id: number
+    name: string
+    owner: string
+    lat?: number | null
+    lng?: number | null
+    verifiers?: Array<{ __typename?: 'Verifier'; address: string }> | null
+  }>
+}
+
+export type InventoriesQueryVariables = Exact<{
+  distinct?: InputMaybe<
+    Array<InventoryScalarFieldEnum> | InventoryScalarFieldEnum
+  >
+  skip?: InputMaybe<Scalars['Int']>
+  take?: InputMaybe<Scalars['Int']>
+  orderBy?: InputMaybe<
+    Array<InventoryOrderByWithRelationInput> | InventoryOrderByWithRelationInput
+  >
+  where?: InputMaybe<InventoryWhereInput>
+}>
+
+export type InventoriesQuery = {
+  __typename?: 'Query'
+  inventories: Array<{
+    __typename?: 'Inventory'
+    id: number
+    price: number
+    balance: number
+    projectId: number
+    project?: { __typename?: 'Project'; id: number; name: string } | null
+  }>
+  inventoriesCount: { __typename?: 'AggregateCountOutput'; count: number }
+}
+
 export const namedOperations = {
   Query: {
     projects: 'projects',
+    searchProjects: 'searchProjects',
+    inventories: 'inventories',
   },
   Fragment: {
     ProjectFragment: 'ProjectFragment',
@@ -512,8 +597,8 @@ export const ProjectFragmentFragmentDoc = /*#__PURE__*/ gql`
     id
     name
     owner
-    price
-    balance
+    lat
+    lng
     verifiers {
       address
     }
@@ -597,4 +682,164 @@ export type ProjectsLazyQueryHookResult = ReturnType<
 export type ProjectsQueryResult = Apollo.QueryResult<
   ProjectsQuery,
   ProjectsQueryVariables
+>
+export const SearchProjectsDocument = /*#__PURE__*/ gql`
+  query searchProjects(
+    $locationFilter: LocationFilterInput!
+    $where: ProjectWhereInput
+    $orderBy: [ProjectOrderByWithRelationInput!]
+    $take: Int
+    $skip: Int
+    $distinct: [ProjectScalarFieldEnum!]
+  ) {
+    searchProjects(
+      locationFilter: $locationFilter
+      where: $where
+      orderBy: $orderBy
+      take: $take
+      skip: $skip
+      distinct: $distinct
+    ) {
+      ...ProjectFragment
+    }
+  }
+  ${ProjectFragmentFragmentDoc}
+`
+
+/**
+ * __useSearchProjectsQuery__
+ *
+ * To run a query within a React component, call `useSearchProjectsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchProjectsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchProjectsQuery({
+ *   variables: {
+ *      locationFilter: // value for 'locationFilter'
+ *      where: // value for 'where'
+ *      orderBy: // value for 'orderBy'
+ *      take: // value for 'take'
+ *      skip: // value for 'skip'
+ *      distinct: // value for 'distinct'
+ *   },
+ * });
+ */
+export function useSearchProjectsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    SearchProjectsQuery,
+    SearchProjectsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<SearchProjectsQuery, SearchProjectsQueryVariables>(
+    SearchProjectsDocument,
+    options,
+  )
+}
+export function useSearchProjectsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    SearchProjectsQuery,
+    SearchProjectsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<SearchProjectsQuery, SearchProjectsQueryVariables>(
+    SearchProjectsDocument,
+    options,
+  )
+}
+export type SearchProjectsQueryHookResult = ReturnType<
+  typeof useSearchProjectsQuery
+>
+export type SearchProjectsLazyQueryHookResult = ReturnType<
+  typeof useSearchProjectsLazyQuery
+>
+export type SearchProjectsQueryResult = Apollo.QueryResult<
+  SearchProjectsQuery,
+  SearchProjectsQueryVariables
+>
+export const InventoriesDocument = /*#__PURE__*/ gql`
+  query inventories(
+    $distinct: [InventoryScalarFieldEnum!]
+    $skip: Int
+    $take: Int
+    $orderBy: [InventoryOrderByWithRelationInput!]
+    $where: InventoryWhereInput
+  ) {
+    inventories(
+      distinct: $distinct
+      skip: $skip
+      take: $take
+      orderBy: $orderBy
+      where: $where
+    ) {
+      id
+      price
+      balance
+      projectId
+      project {
+        id
+        name
+      }
+    }
+    inventoriesCount(where: $where) {
+      count
+    }
+  }
+`
+
+/**
+ * __useInventoriesQuery__
+ *
+ * To run a query within a React component, call `useInventoriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useInventoriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useInventoriesQuery({
+ *   variables: {
+ *      distinct: // value for 'distinct'
+ *      skip: // value for 'skip'
+ *      take: // value for 'take'
+ *      orderBy: // value for 'orderBy'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useInventoriesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    InventoriesQuery,
+    InventoriesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<InventoriesQuery, InventoriesQueryVariables>(
+    InventoriesDocument,
+    options,
+  )
+}
+export function useInventoriesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    InventoriesQuery,
+    InventoriesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<InventoriesQuery, InventoriesQueryVariables>(
+    InventoriesDocument,
+    options,
+  )
+}
+export type InventoriesQueryHookResult = ReturnType<typeof useInventoriesQuery>
+export type InventoriesLazyQueryHookResult = ReturnType<
+  typeof useInventoriesLazyQuery
+>
+export type InventoriesQueryResult = Apollo.QueryResult<
+  InventoriesQuery,
+  InventoriesQueryVariables
 >

@@ -24,8 +24,7 @@ export const ProjectCard = memo(({ project }: IProjectCardProps) => {
       >
         <div className="flex justify-center w-full ">
           <div>{project.name}</div>
-          <div>{project.price}</div>
-          <div>{project.balance}</div>
+
           <PlainButton>Buy</PlainButton>
         </div>
       </div>

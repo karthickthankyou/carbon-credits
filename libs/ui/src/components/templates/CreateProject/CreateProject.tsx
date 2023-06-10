@@ -72,22 +72,21 @@ export const CreateProjectContent = ({}: ICreateProjectProps) => {
         <div className="flex gap-2">
           <Form
             onSubmit={handleSubmit(
-              ({ name, price, location: { latitude, longitude } }) => {
+              ({ name, location: { latitude, longitude } }) => {
                 if (!contract) {
                   console.error('Contract not found')
                   return
                 }
                 const bigIntLat = Math.round(latitude * 10000)
                 const bigIntLng = Math.round(longitude * 10000)
-                console.log(name, price, bigIntLat, bigIntLng)
+
                 createProjectFunction({
                   account,
                   contract,
                   payload: {
                     name,
-                    price,
-                    latitude: bigIntLat,
-                    longitude: bigIntLng,
+                    lat: bigIntLat,
+                    lng: bigIntLng,
                   },
                 })
               },
@@ -95,13 +94,6 @@ export const CreateProjectContent = ({}: ICreateProjectProps) => {
           >
             <HtmlLabel error={errors.name?.message} title="name">
               <HtmlInput placeholder="Project name" {...register('name')} />
-            </HtmlLabel>
-            <HtmlLabel error={errors.name?.message} title="price">
-              <HtmlInput
-                placeholder="Price"
-                type="number"
-                {...register('price', { valueAsNumber: true })}
-              />
             </HtmlLabel>
             <Button loading={loading} color="black" type="submit">
               Create

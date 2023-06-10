@@ -3,6 +3,7 @@ import { ListProjects } from '@carbon-credits/ui/src/components/templates/ListPr
 import { Container } from '@carbon-credits/ui/src/components/atoms/Container'
 import { AlertSection } from '@carbon-credits/ui/src/components/organisms/AlertSection'
 import { PlainButton } from '@carbon-credits/ui/src/components/atoms/PlainButton'
+import { SearchPageTemplate } from '@carbon-credits/ui/src/components/templates/SearchPageTemplate'
 
 export default function Home() {
   const { account, contract, isOwner } = useAccount()
@@ -10,7 +11,7 @@ export default function Home() {
   return (
     <Container>
       {account ? (
-        <ListProjects />
+        <SearchPageTemplate />
       ) : (
         <AlertSection>
           <div>You need to sign in with metamask.</div>

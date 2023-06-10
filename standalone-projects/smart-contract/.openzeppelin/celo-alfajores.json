@@ -19,6 +19,11 @@
       "address": "0xEfB5B8c2C1B6832836A551D413E3F8A9b2C14b4C",
       "txHash": "0xd6c83744c2993c62b48588a67f7b42b7c05f9c147b3e3199fd890ff42964dc3a",
       "kind": "transparent"
+    },
+    {
+      "address": "0xb56DE44B1Cd2D786996ed0320754a30c259A44cF",
+      "txHash": "0x730b5c5c7db0c627811dfec65b27a5f48bd2b36cdb9e4d70bfe4346727cd9bd3",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -936,6 +941,180 @@
               }
             ],
             "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "40a0cb4b7c4a3fdb0bdbc8a80a3ab65949da5e4865641f88dd4c3a9716393bc9": {
+      "address": "0x793fCaEB9DBC826C969A13e29F538e793aDE1691",
+      "txHash": "0x8a2bef5bb1ad74c935c551ee02918b02e9d1f2b22de4296311993cc5d03b16c1",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "owner",
+            "offset": 2,
+            "slot": "0",
+            "type": "t_address_payable",
+            "contract": "CarbonCredits",
+            "src": "contracts/CarbonCredits.sol:7"
+          },
+          {
+            "label": "projects",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_struct(Project)531_storage)dyn_storage",
+            "contract": "CarbonCredits",
+            "src": "contracts/CarbonCredits.sol:27"
+          },
+          {
+            "label": "projectVerifiers",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_uint256,t_array(t_address)dyn_storage)",
+            "contract": "CarbonCredits",
+            "src": "contracts/CarbonCredits.sol:28"
+          },
+          {
+            "label": "verifiers",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "CarbonCredits",
+            "src": "contracts/CarbonCredits.sol:29"
+          },
+          {
+            "label": "inventories",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_struct(Inventory)538_storage))",
+            "contract": "CarbonCredits",
+            "src": "contracts/CarbonCredits.sol:30"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_address_payable": {
+            "label": "address payable",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(Project)531_storage)dyn_storage": {
+            "label": "struct CarbonCredits.Project[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_int256": {
+            "label": "int256",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_struct(Inventory)538_storage))": {
+            "label": "mapping(address => mapping(uint256 => struct CarbonCredits.Inventory))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_array(t_address)dyn_storage)": {
+            "label": "mapping(uint256 => address[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Inventory)538_storage)": {
+            "label": "mapping(uint256 => struct CarbonCredits.Inventory)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Inventory)538_storage": {
+            "label": "struct CarbonCredits.Inventory",
+            "members": [
+              {
+                "label": "price",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "credits",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "forSale",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_struct(Project)531_storage": {
+            "label": "struct CarbonCredits.Project",
+            "members": [
+              {
+                "label": "owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "lat",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "lng",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
           },
           "t_uint256": {
             "label": "uint256",

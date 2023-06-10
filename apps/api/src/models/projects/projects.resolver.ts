@@ -9,6 +9,7 @@ import { Transfer } from '../transfers/entities/transfer.entity'
 import { Retirement } from '../retirements/entities/retirement.entity'
 import { AggregateCountOutput } from 'src/common/dtos/common.input'
 import { ProjectWhereInput } from './dto/where.args'
+import { LocationFilterInput } from './dto/search-filter.input'
 
 @Resolver(() => Project)
 export class ProjectsResolver {
@@ -28,6 +29,28 @@ export class ProjectsResolver {
   @Query(() => Project, { name: 'project' })
   findOne(@Args() args: FindUniqueProjectArgs) {
     return this.projectsService.findOne(args)
+  }
+
+  @Query(() => [Project], { name: 'searchProjects' })
+  async searchProjects(
+    @Args('locationFilter') locationFilter: LocationFilterInput,
+    @Args({ nullable: true }) args: FindManyProjectArgs,
+  ) {
+    const { where = {}, cursor, distinct, orderBy, skip, take } = args || {}
+    const { nw_lat, nw_lng, se_lat, se_lng } = locationFilter
+
+    return this.prisma.project.findMany({
+      cursor,
+      distinct,
+      orderBy,
+      skip,
+      take,
+      where: {
+        ...where,
+        lat: { lte: nw_lat, gte: se_lat },
+        lng: { gte: nw_lng, lte: se_lng },
+      },
+    })
   }
 
   @Query(() => AggregateCountOutput, {

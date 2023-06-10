@@ -24,13 +24,11 @@ type AggregateCountOutput {
 }
 
 type Project {
+  lat: Float
+  lng: Float
   id: Int!
   name: String!
-  price: Int!
-  balance: Int!
   owner: String!
-  lat: Int!
-  lng: Int!
   verifiers: [Verifier!]
   inventories: [Inventory!]
   transfers: [Transfer!]
@@ -64,8 +62,10 @@ type Retirement {
 type Query {
   inventories(where: InventoryWhereInput, orderBy: [InventoryOrderByWithRelationInput!], cursor: InventoryWhereUniqueInput, take: Int, skip: Int, distinct: [InventoryScalarFieldEnum!]): [Inventory!]!
   inventory(where: InventoryWhereUniqueInput): Inventory!
+  inventoriesCount(where: InventoryWhereInput): AggregateCountOutput!
   projects(where: ProjectWhereInput, orderBy: [ProjectOrderByWithRelationInput!], cursor: ProjectWhereUniqueInput, take: Int, skip: Int, distinct: [ProjectScalarFieldEnum!], searchTerm: String): [Project!]!
   project(where: ProjectWhereUniqueInput): Project!
+  searchProjects(locationFilter: LocationFilterInput!, where: ProjectWhereInput, orderBy: [ProjectOrderByWithRelationInput!], cursor: ProjectWhereUniqueInput, take: Int, skip: Int, distinct: [ProjectScalarFieldEnum!]): [Project!]!
   projectsCount(where: ProjectWhereInput): AggregateCountOutput!
   retirements(where: RetirementWhereInput, orderBy: [RetirementOrderByWithRelationInput!], cursor: RetirementWhereUniqueInput, take: Int, skip: Int, distinct: [RetirementScalarFieldEnum!]): [Retirement!]!
   retirement(where: RetirementWhereUniqueInput): Retirement!
@@ -144,8 +144,6 @@ input ProjectRelationFilter {
 input ProjectWhereInput {
   lat: FloatFilter
   lng: FloatFilter
-  price: IntFilter
-  balance: IntFilter
   id: IntFilter
   name: StringFilter
   owner: StringFilter
@@ -252,8 +250,6 @@ enum SortOrder {
 input ProjectOrderByWithRelationInput {
   lat: SortOrder
   lng: SortOrder
-  price: SortOrder
-  balance: SortOrder
   id: SortOrder
   name: SortOrder
   owner: SortOrder
@@ -308,10 +304,15 @@ enum ProjectScalarFieldEnum {
   id
   name
   owner
-  price
-  balance
   lat
   lng
+}
+
+input LocationFilterInput {
+  nw_lat: Float!
+  nw_lng: Float!
+  se_lat: Float!
+  se_lng: Float!
 }
 
 input RetirementOrderByWithRelationInput {

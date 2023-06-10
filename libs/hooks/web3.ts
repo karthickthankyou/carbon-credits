@@ -17,6 +17,7 @@ export const useAccount = () => {
   const [account, setAccount] = useState('')
   const [contract, setContract] = useState<Contract | null>()
   const [isOwner, setIsOwner] = useState(false)
+  const [isVerifier, setIsVerifier] = useState(false)
 
   useEffect(() => {
     loadWeb3()
@@ -70,7 +71,10 @@ export const useAccount = () => {
     // Check if the user is the owner of the contract
     const contractOwner = await contract?.methods.owner().call()
     setIsOwner(accounts[0] === contractOwner)
+
+    const _isVerifier = await contract.methods.verifiers(accounts[0]).call()
+    setIsVerifier(_isVerifier)
   }
 
-  return { account, contract, isOwner }
+  return { account, contract, isOwner, isVerifier }
 }

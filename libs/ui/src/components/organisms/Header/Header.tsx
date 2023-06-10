@@ -1,24 +1,29 @@
 import Link from 'next/link'
-import { Button } from '../../atoms/Button'
+
 import { Container } from '../../atoms/Container'
 
 import { NavSidebar, ShowMenuItems } from '../NavSidebar/NavSidebar'
 import { Suspense } from 'react'
 import { useAccount } from '@carbon-credits/hooks/web3'
 import { Logo } from '../../atoms/Logo'
+import { MenuItem, ROLES } from '@carbon-credits/types'
+import { MENUITEMS, SUBMENUITEMS, filterMenuItems } from '@carbon-credits/util'
 
-export type MenuItem = { label: string; href: string; loggedIn?: boolean }
-
-export type IHeaderProps = {
-  menuItems?: MenuItem[]
-  sideMenuItems?: MenuItem[]
-}
-
-export const Header = ({
-  menuItems = [],
-  sideMenuItems = [],
-}: IHeaderProps) => {
-  const { account } = useAccount()
+export const Header = () => {
+  const { account, isOwner, isVerifier } = useAccount()
+  const roles: ROLES = {
+    admin: isOwner,
+    verifier: isVerifier,
+    loggedIn: Boolean(account),
+  }
+  const menuItems = filterMenuItems({
+    roles,
+    menuItems: MENUITEMS,
+  })
+  const sideMenuItems = filterMenuItems({
+    roles,
+    menuItems: SUBMENUITEMS,
+  })
 
   return (
     <header className="z-40">

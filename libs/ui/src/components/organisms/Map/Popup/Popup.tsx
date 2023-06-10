@@ -10,6 +10,7 @@ const MapPopup = ({
   onClose,
   show,
   setShow,
+  className,
   ...props
 }: PopupProps & {
   show: boolean
@@ -31,6 +32,7 @@ const MapPopup = ({
       closeButton={false}
       latitude={latitude}
       longitude={longitude}
+      className={className}
     >
       <div className="grid grid-cols-1 grid-rows-1">
         <div className="col-start-1 row-start-1 ">{children}</div>
