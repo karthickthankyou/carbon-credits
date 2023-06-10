@@ -23,14 +23,18 @@ export async function createProject({
   contract,
   account,
   payload: { name, lat, lng },
-}: ActionType<CreateProjectPayload>): Promise<void> {
+}: ActionType<CreateProjectPayload>): Promise<boolean> {
   try {
-    console.log({ name, lat, lng })
-    await contract.methods
-      .createProject(account, name, lat, lng)
+    const result = await contract.methods
+      .createProject(name, lat, lng)
       .send({ from: account })
+    if (result.status) {
+      return true
+    }
+    return false
   } catch (error) {
     console.error(error)
+    return false
   }
 }
 
@@ -38,12 +42,37 @@ export async function addVerifier({
   contract,
   account,
   payload: { verifier },
-}: ActionType<{ verifier: string }>): Promise<void> {
+}: ActionType<{ verifier: string }>): Promise<boolean> {
   try {
-    console.log({ verifier })
-    await contract.methods.addVerifier(verifier).send({ from: account })
+    const result = await contract.methods
+      .addVerifier(verifier)
+      .send({ from: account })
+    if (result.status) {
+      return true
+    }
+    return false
   } catch (error) {
     console.error(error)
+    return false
+  }
+}
+
+export async function verifyProject({
+  contract,
+  account,
+  payload: { projectId },
+}: ActionType<{ projectId: number }>): Promise<boolean> {
+  try {
+    const result = await contract.methods
+      .verifyProject(projectId)
+      .send({ from: account })
+    if (result.status) {
+      return true
+    }
+    return false
+  } catch (error) {
+    console.error(error)
+    return false
   }
 }
 
@@ -51,15 +80,19 @@ export async function buyCredits({
   contract,
   account,
   payload: { projectId, quantity, price },
-}: ActionType<BuyCreditsPayload>): Promise<void> {
+}: ActionType<BuyCreditsPayload>): Promise<boolean> {
   try {
     const totalCost = Web3.utils.toWei((quantity * price).toString(), 'kwei')
 
-    console.log({ projectId, account, quantity })
-    await contract.methods
+    const result = await contract.methods
       .buyCredits(projectId, account, quantity)
       .send({ from: account, value: totalCost })
+    if (result.status) {
+      return true
+    }
+    return false
   } catch (error) {
     console.error(error)
+    return false
   }
 }

@@ -26,9 +26,6 @@ export function useAsync<T extends any[]>(
       setData(null)
       try {
         const result = await asyncFunc(...args)
-        if (onSuccess) {
-          onSuccess(result)
-        }
         setData(result)
       } catch (e: any) {
         setError(e.message || 'An error occurred')

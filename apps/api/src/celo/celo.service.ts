@@ -98,14 +98,14 @@ export class CeloService {
           fromBlock: 'latest',
         },
         async (error, event) => {
-          const { projectId, verfier } = event.returnValues
+          const { projectId, verifier } = event.returnValues
           await this.prisma.project.update({
-            where: { id: projectId },
+            where: { id: +projectId },
             data: {
               verifiers: {
                 connectOrCreate: {
-                  create: { address: verfier },
-                  where: { address: verfier },
+                  create: { address: verifier },
+                  where: { address: verifier },
                 },
               },
             },

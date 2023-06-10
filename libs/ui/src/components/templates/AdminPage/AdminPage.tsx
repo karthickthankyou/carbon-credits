@@ -12,6 +12,7 @@ import { Button } from '../../atoms/Button'
 import { Dialog } from '../../atoms/Dialog'
 import { useAccount } from '@carbon-credits/hooks/web3'
 import { notification$ } from '@carbon-credits/util/subjects'
+import { IconPlus } from '@tabler/icons-react'
 
 export interface IAdminPageProps {}
 
@@ -48,7 +49,14 @@ export const CreateVerifier = () => {
   const [{ data, loading, error }, addVerifierFunction] = useAsync(addVerifier)
   return (
     <div>
-      <PlainButton onClick={() => setOpen(true)}>Create verifer</PlainButton>
+      <div className="flex justify-end">
+        <PlainButton
+          className="flex items-center gap-1 py-2 hover:underline underline-offset-4"
+          onClick={() => setOpen(true)}
+        >
+          <IconPlus /> Create verifier
+        </PlainButton>
+      </div>
       <Dialog open={open} setOpen={setOpen} title={'Add verifier'}>
         <Form
           onSubmit={async (e) => {
@@ -80,11 +88,12 @@ export const CreateVerifier = () => {
               onChange={(e) => setAddress(e.target.value)}
             />
           </HtmlLabel>
-          <Button loading={loading} type="submit">
+          <Button disabled={Boolean(data)} loading={loading} type="submit">
             Add verifier
           </Button>
         </Form>
       </Dialog>
+      {data ? <div>Verifier added. 🎉🎉🎉</div> : null}
     </div>
   )
 }

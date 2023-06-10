@@ -83,10 +83,13 @@ contract CarbonCredits is Initializable {
             verifiers[msg.sender],
             'Only registered verifiers can verify projects'
         );
-        require(
-            projectVerifiers[projectId].length == 0,
-            'The project is already verified'
-        );
+        address[] storage verifiersForProject = projectVerifiers[projectId];
+        for (uint i = 0; i < verifiersForProject.length; i++) {
+            require(
+                verifiersForProject[i] != msg.sender,
+                'This verifier has already verified this project'
+            );
+        }
 
         projectVerifiers[projectId].push(msg.sender);
 

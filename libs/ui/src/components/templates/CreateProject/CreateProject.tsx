@@ -95,7 +95,12 @@ export const CreateProjectContent = ({}: ICreateProjectProps) => {
             <HtmlLabel error={errors.name?.message} title="name">
               <HtmlInput placeholder="Project name" {...register('name')} />
             </HtmlLabel>
-            <Button loading={loading} color="black" type="submit">
+            <Button
+              disabled={Boolean(data)}
+              loading={loading}
+              color="black"
+              type="submit"
+            >
               Create
             </Button>
           </Form>
@@ -134,6 +139,7 @@ export const CreateProjectContent = ({}: ICreateProjectProps) => {
             </Panel>
           </Map>
         </div>
+        {data ? <div>Project creation success.🎉🎉🎉</div> : null}
       </Dialog>
     </>
   )
