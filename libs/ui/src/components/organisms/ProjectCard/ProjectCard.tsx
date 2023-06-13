@@ -10,6 +10,9 @@ import { HtmlInput } from '../../atoms/HtmlInput'
 import { Button } from '../../atoms/Button'
 import { useAsync } from '@carbon-credits/hooks/async'
 import { addCredits } from '@carbon-credits/contract-utilities'
+import { useFetchIPFS } from '@carbon-credits/util'
+import Badge from '../../atoms/Badge'
+import { IconAlertCircle, IconCheck } from '@tabler/icons-react'
 
 export type ProjectQuery = ProjectsQuery['projects'][number]
 
@@ -21,21 +24,38 @@ export interface IProjectCardProps {
 }
 
 export const ProjectCard = memo(({ project }: IProjectCardProps) => {
+  console.log('project ', project)
   const { account, contract, isOwner } = useAccount()
+
+  const { images } = useFetchIPFS(project.images)
 
   return (
     <div>
       <div
-        className="flex flex-col items-center justify-start gap-1 p-2 bg-white "
+        className="flex flex-col overflow-hidden bg-white rounded"
         key={project.id}
       >
-        <div className="flex flex-col justify-center w-full ">
-          <div>{project.name}</div>
-          <span className="px-1 rounded bg-primary">{project.verified}</span>
+        {images.map((image) => (
+          <img className="object-cover w-full h-48" key={image} src={image} />
+        ))}
+        <div className="flex flex-col items-start w-full p-2 ">
+          <div className="font-semibold">{project.name}</div>
+          <div className="text-xs text-gray">{project.about}</div>
+          <div className="mt-1">
+            {project.verified ? (
+              <div className="flex items-center gap-1 text-sm">
+                <IconCheck /> Verified {project.verified}.
+              </div>
+            ) : (
+              <div className="flex items-center gap-1 text-sm">
+                <IconAlertCircle /> Unverified
+              </div>
+            )}
+          </div>
           {project.owner === account && project.verified ? (
             <AddCreditsDialog project={project} />
           ) : null}
-          <PlainButton>Buy</PlainButton>
+          {project.owner !== account ? <PlainButton>Buy</PlainButton> : null}
         </div>
       </div>
       <div className="mt-2 text-center">

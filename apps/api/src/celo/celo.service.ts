@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import Web3 from 'web3'
 import * as dotenv from 'dotenv'
-import { abi, contractAddress } from 'src/util/celo'
+
 import { AbiItem } from 'web3-utils'
 import { PrismaService } from 'src/common/prisma/prisma.service'
 import { MeilisearchService } from 'src/meilisearch/meilisearch.service'
 import { intToCoords } from 'src/util'
+import { abi, contractAddress } from '../util/celo'
 dotenv.config()
 
 @Injectable()
@@ -53,11 +54,14 @@ export class CeloService {
           fromBlock: 'latest',
         },
         async (error, event) => {
-          const { owner, projectId, name, lat, lng } = event.returnValues
+          const { owner, projectId, name, about, images, lat, lng } =
+            event.returnValues
           const project = await this.prisma.project.create({
             data: {
               id: +projectId,
               name,
+              about,
+              images,
               owner,
               lat: intToCoords(+lat),
               lng: intToCoords(+lng),
@@ -78,11 +82,10 @@ export class CeloService {
           fromBlock: 'latest',
         },
         async (error, event) => {
-          const { verifier } = event.returnValues
+          const { name, imageUrl, walletAddress, active } = event.returnValues
+          console.log('VerifierAdded: ', event.returnValues)
           const newVerifier = await this.prisma.verifier.create({
-            data: {
-              address: verifier,
-            },
+            data: { active: active === 'true', imageUrl, name, walletAddress },
           })
 
           console.log('newVerifier', newVerifier)
@@ -103,9 +106,8 @@ export class CeloService {
             where: { id: +projectId },
             data: {
               verifiers: {
-                connectOrCreate: {
-                  create: { address: verifier },
-                  where: { address: verifier },
+                connect: {
+                  walletAddress: verifier,
                 },
               },
             },

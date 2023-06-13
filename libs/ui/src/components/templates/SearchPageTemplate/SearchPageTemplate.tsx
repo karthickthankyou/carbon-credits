@@ -1,5 +1,6 @@
 import { Map } from '../../organisms/Map'
 import { SetStateAction, useEffect, useState } from 'react'
+import { produce } from 'immer'
 import { LocationInfo, useSearchLocation } from '@carbon-credits/hooks/location'
 import { Button } from '../../atoms/Button'
 import {
@@ -19,6 +20,7 @@ import { FilterSidebar } from '../../organisms/FilterSidebar'
 import { Panel } from '../../organisms/Map/Panel'
 import { DefaultZoomControls } from '../../organisms/Map/ZoomControls/ZoomControls'
 import {
+  InventoriesQuery,
   SearchProjectsQuery,
   useInventoriesQuery,
   useSearchProjectsLazyQuery,
@@ -32,9 +34,19 @@ import { majorCitiesLocationInfo } from '../../organisms/SearchPlaceBox/SearchPl
 import { Dialog } from '../../atoms/Dialog'
 
 import { BuyCreditsPopup } from '../../organisms/Map/BuyCreditsPopup'
-import { FormProviderBuyCredits } from '@carbon-credits/forms/src/buyCredits'
+import {
+  FormProviderBuyCredits,
+  userFormBuyCredits,
+} from '@carbon-credits/forms/src/buyCredits'
 import { Popup } from '../../organisms/Map/Popup'
 import { ShowData } from '../../organisms/ShowData'
+import { HtmlLabel } from '../../atoms/HtmlLabel'
+import { PlainButton } from '../../atoms/PlainButton'
+import { Form } from '../../atoms/Form'
+import { useAccount } from '@carbon-credits/hooks/web3'
+import { useAsync } from '@carbon-credits/hooks/async'
+import { buyCredits } from '@carbon-credits/contract-utilities'
+import { HtmlInput } from '../../atoms/HtmlInput'
 
 export interface ISearchPageTemplateProps {
   initialProps: {
@@ -186,12 +198,13 @@ export const MarkerWithPopup = ({
             setSkip,
             setTake,
           }}
-          className="flex flex-col gap-2"
+          className="flex flex-col gap-2 p-2"
         >
           {data?.inventories.map((inventory) => (
-            <div key={inventory.id}>
+            <div key={inventory.id} className="z-10">
               <div>{inventory.price}</div>
               <div>{inventory.balance}</div>
+              <AddCreditsDialog inventory={inventory} />
             </div>
           ))}
         </ShowData>
@@ -213,36 +226,30 @@ export const MarkerWithPopup = ({
 export const ZOOM_LIMIT = 10
 
 export const ShowMarkers = () => {
-  const [garages, setGarages] = useState<SearchProjectsQuery['searchProjects']>(
-    [],
-  )
-
   const { current: map } = useMap()
-  const [searchGarages, { loading, data }] = useSearchProjectsLazyQuery()
+  const [searchGarages, { loading, data, previousData }] =
+    useSearchProjectsLazyQuery()
 
   const { variables } = useConvertSearchFormToVariables()
 
   useEffect(() => {
     if (variables) {
-      console.log('zoom level ', map?.getZoom())
-      searchGarages({ variables })
+      const variabledWithVerifiers = produce(variables, (variablesDraft) => {
+        if (variablesDraft.where) {
+          variablesDraft.where.verifiers = { some: {} }
+        } else {
+          variablesDraft.where = { verifiers: { some: {} } }
+        }
+      })
+      console.log('variabledWithVerifiers ', variabledWithVerifiers)
+      searchGarages({
+        variables: variabledWithVerifiers,
+        fetchPolicy: 'cache-first',
+      })
     }
   }, [variables])
-  useEffect(() => {
-    if (data?.searchProjects) {
-      setGarages(data.searchProjects || [])
-    }
-  }, [data?.searchProjects])
 
-  if (data?.searchProjects.length === 0) {
-    return (
-      <Panel position="center-center" className="bg-white/50">
-        <div className="flex items-center justify-center gap-2 ">
-          <IconInfoCircle /> <div>No projects found in this area.</div>
-        </div>
-      </Panel>
-    )
-  }
+  console.log(data, loading)
 
   return (
     <>
@@ -251,9 +258,17 @@ export const ShowMarkers = () => {
           <IconRefresh className="animate-spin-reverse" />
         </Panel>
       ) : null}
-      {garages.map((garage) => (
-        <MarkerWithPopup key={garage.id} marker={garage} />
-      ))}
+      {data?.searchProjects.length === 0 && !loading ? (
+        <Panel position="center-center" className="bg-white/50">
+          <div className="flex items-center justify-center gap-2 ">
+            <IconInfoCircle /> <div>No projects found in this area.</div>
+          </div>
+        </Panel>
+      ) : (
+        (data || previousData)?.searchProjects.map((project) => (
+          <MarkerWithPopup key={project.id} marker={project} />
+        ))
+      )}
     </>
   )
 }
@@ -266,9 +281,10 @@ export const SearchBox = () => {
   return (
     <Autocomplete<LocationInfo, false, false, false>
       options={locationInfo.length ? locationInfo : majorCitiesLocationInfo}
-      isOptionEqualToValue={(option, value) =>
-        option.placeName === value.placeName
-      }
+      isOptionEqualToValue={(option, value) => {
+        console.log('option, value ', option, value)
+        return option.placeName === value.placeName
+      }}
       noOptionsText={searchText ? 'No options.' : 'Type something...'}
       getOptionLabel={(x) => x.placeName}
       onInputChange={(_, v) => {
@@ -283,5 +299,74 @@ export const SearchBox = () => {
         }
       }}
     />
+  )
+}
+
+export const AddCreditsDialog = ({
+  inventory,
+}: {
+  inventory: InventoriesQuery['inventories'][number]
+}) => {
+  const [open, setOpen] = useState(false)
+  const { account, contract, isOwner } = useAccount()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = userFormBuyCredits()
+  const [{ data, loading, error }, buyCreditsFunction] = useAsync(buyCredits)
+  return (
+    <>
+      <PlainButton
+        className="text-sm underline underline-offset-4"
+        onClick={() => {
+          console.log('setOpen')
+          setOpen(true)
+        }}
+      >
+        Buy credits
+      </PlainButton>
+      <Dialog open={open} setOpen={setOpen} title={'Owners'}>
+        <div>{inventory.price}</div>
+        <div>{inventory.balance}</div>
+        <div>{inventory?.project?.name}</div>
+        <Form
+          onSubmit={handleSubmit(async ({ quantity }) => {
+            console.log('data ', { quantity })
+
+            if (!contract) {
+              return
+            }
+
+            await buyCreditsFunction({
+              account,
+              contract,
+              payload: {
+                projectId: inventory.projectId,
+                quantity,
+                price: inventory.price,
+              },
+            })
+          })}
+        >
+          <HtmlLabel error={errors.quantity?.message} title="Quantity">
+            <HtmlInput
+              placeholder="Quantity"
+              {...register('quantity', { valueAsNumber: true })}
+            />
+          </HtmlLabel>
+
+          <Button loading={loading} type="submit">
+            Add credits
+          </Button>
+        </Form>
+        {data ? <div>Credits added successfully. 🎉🎉🎉</div> : null}
+        {error ? (
+          <div className="mt-1 text-sm text-red-800">
+            Error for developers: {error}
+          </div>
+        ) : null}
+      </Dialog>
+    </>
   )
 }

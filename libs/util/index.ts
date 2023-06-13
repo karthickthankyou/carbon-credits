@@ -1,4 +1,5 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+
 import axios from 'axios'
 import { format } from 'date-fns'
 import { MenuItem, ROLES } from '@carbon-credits/types'
@@ -125,3 +126,67 @@ export const SUBMENUITEMS: MenuItem[] = [
   { label: 'Reports', href: '/reports', loggedIn: true },
   { label: 'Settings', href: '/settings', loggedIn: false },
 ]
+
+export const uploadImagesIPFS = async (files: any) => {
+  const ipfsDataArray = []
+
+  for (let i = 0; i < files.length; i++) {
+    const formData = new FormData()
+    formData.append('file', files[i])
+
+    const response = await fetch('https://api.tatum.io/v3/ipfs', {
+      method: 'POST',
+      headers: {
+        'x-api-key': process.env.NEXT_PUBLIC_TATUM_KEY || '',
+      },
+      body: formData,
+    })
+
+    const ipfsData = await response.text()
+
+    ipfsDataArray.push(ipfsData)
+  }
+
+  console.log('ipfsDataArray ', ipfsDataArray)
+  return ipfsDataArray
+}
+
+export const useFetchIPFS = (ipfsImages: string[]) => {
+  const [images, setImages] = useState<string[]>([])
+
+  useEffect(() => {
+    try {
+      const fetchImages = async () => {
+        const newImages = []
+
+        if (!ipfsImages?.length) {
+          return
+        }
+        for (const hash of ipfsImages) {
+          const { ipfsHash } = JSON.parse(hash)
+
+          const response = await fetch(
+            `https://api.tatum.io/v3/ipfs/${ipfsHash}`,
+            {
+              method: 'GET',
+              headers: {
+                'x-api-key': process.env.NEXT_PUBLIC_TATUM_KEY || '',
+              },
+            },
+          )
+
+          const blob = await response.blob()
+          const url = URL.createObjectURL(blob)
+          newImages.push(url)
+        }
+
+        setImages(newImages)
+      }
+      fetchImages()
+    } catch (error) {
+      console.log('error', error)
+    }
+  }, [ipfsImages, setImages])
+
+  return { images }
+}

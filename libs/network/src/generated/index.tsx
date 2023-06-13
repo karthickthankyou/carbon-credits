@@ -33,6 +33,62 @@ export type BoolFilter = {
   not?: InputMaybe<Scalars['Boolean']>
 }
 
+export type Creation = {
+  __typename?: 'Creation'
+  id: Scalars['Int']
+  price: Scalars['Int']
+  projectId: Scalars['Int']
+  quantity: Scalars['Int']
+  timestamp: Scalars['DateTime']
+  user: Scalars['String']
+}
+
+export type CreationListRelationFilter = {
+  every?: InputMaybe<CreationWhereInput>
+  none?: InputMaybe<CreationWhereInput>
+  some?: InputMaybe<CreationWhereInput>
+}
+
+export type CreationOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>
+}
+
+export type CreationOrderByWithRelationInput = {
+  id?: InputMaybe<SortOrder>
+  price?: InputMaybe<SortOrder>
+  project?: InputMaybe<ProjectOrderByWithRelationInput>
+  projectId?: InputMaybe<SortOrder>
+  quantity?: InputMaybe<SortOrder>
+  timestamp?: InputMaybe<SortOrder>
+  user?: InputMaybe<SortOrder>
+}
+
+export enum CreationScalarFieldEnum {
+  Id = 'id',
+  Price = 'price',
+  ProjectId = 'projectId',
+  Quantity = 'quantity',
+  Timestamp = 'timestamp',
+  User = 'user',
+}
+
+export type CreationWhereInput = {
+  AND?: InputMaybe<Array<CreationWhereInput>>
+  NOT?: InputMaybe<Array<CreationWhereInput>>
+  OR?: InputMaybe<Array<CreationWhereInput>>
+  id?: InputMaybe<IntFilter>
+  price?: InputMaybe<IntFilter>
+  project?: InputMaybe<ProjectRelationFilter>
+  projectId?: InputMaybe<IntFilter>
+  quantity?: InputMaybe<IntFilter>
+  timestamp?: InputMaybe<DateTimeFilter>
+  user?: InputMaybe<StringFilter>
+}
+
+export type CreationWhereUniqueInput = {
+  id?: InputMaybe<Scalars['Int']>
+}
+
 export type DateTimeFilter = {
   equals?: InputMaybe<Scalars['String']>
   gt?: InputMaybe<Scalars['String']>
@@ -159,7 +215,9 @@ export type MutationFindAllArgs = {
 
 export type Project = {
   __typename?: 'Project'
+  about: Scalars['String']
   id: Scalars['Int']
+  images: Array<Scalars['String']>
   inventories?: Maybe<Array<Inventory>>
   lat?: Maybe<Scalars['Float']>
   lng?: Maybe<Scalars['Float']>
@@ -182,7 +240,10 @@ export type ProjectOrderByRelationAggregateInput = {
 }
 
 export type ProjectOrderByWithRelationInput = {
+  about?: InputMaybe<SortOrder>
+  creations?: InputMaybe<CreationOrderByRelationAggregateInput>
   id?: InputMaybe<SortOrder>
+  images?: InputMaybe<SortOrder>
   inventories?: InputMaybe<InventoryOrderByRelationAggregateInput>
   lat?: InputMaybe<SortOrder>
   lng?: InputMaybe<SortOrder>
@@ -199,7 +260,9 @@ export type ProjectRelationFilter = {
 }
 
 export enum ProjectScalarFieldEnum {
+  About = 'about',
   Id = 'id',
+  Images = 'images',
   Lat = 'lat',
   Lng = 'lng',
   Name = 'name',
@@ -210,7 +273,10 @@ export type ProjectWhereInput = {
   AND?: InputMaybe<Array<ProjectWhereInput>>
   NOT?: InputMaybe<Array<ProjectWhereInput>>
   OR?: InputMaybe<Array<ProjectWhereInput>>
+  about?: InputMaybe<StringFilter>
+  creations?: InputMaybe<CreationListRelationFilter>
   id?: InputMaybe<IntFilter>
+  images?: InputMaybe<StringListFilter>
   inventories?: InputMaybe<InventoryListRelationFilter>
   lat?: InputMaybe<FloatFilter>
   lng?: InputMaybe<FloatFilter>
@@ -227,6 +293,8 @@ export type ProjectWhereUniqueInput = {
 
 export type Query = {
   __typename?: 'Query'
+  creation: Creation
+  creations: Array<Creation>
   inventories: Array<Inventory>
   inventoriesCount: AggregateCountOutput
   inventory: Inventory
@@ -241,6 +309,19 @@ export type Query = {
   verifier: Verifier
   verifiers: Array<Verifier>
   verifiersCount: AggregateCountOutput
+}
+
+export type QueryCreationArgs = {
+  where?: InputMaybe<CreationWhereUniqueInput>
+}
+
+export type QueryCreationsArgs = {
+  cursor?: InputMaybe<CreationWhereUniqueInput>
+  distinct?: InputMaybe<Array<CreationScalarFieldEnum>>
+  orderBy?: InputMaybe<Array<CreationOrderByWithRelationInput>>
+  skip?: InputMaybe<Scalars['Int']>
+  take?: InputMaybe<Scalars['Int']>
+  where?: InputMaybe<CreationWhereInput>
 }
 
 export type QueryInventoriesArgs = {
@@ -409,6 +490,14 @@ export type StringFilter = {
   startsWith?: InputMaybe<Scalars['String']>
 }
 
+export type StringListFilter = {
+  equals?: InputMaybe<Array<Scalars['String']>>
+  has?: InputMaybe<Scalars['String']>
+  hasEvery?: InputMaybe<Array<Scalars['String']>>
+  hasSome?: InputMaybe<Array<Scalars['String']>>
+  isEmpty?: InputMaybe<Scalars['Boolean']>
+}
+
 export type Transfer = {
   __typename?: 'Transfer'
   from: Scalars['String']
@@ -468,8 +557,11 @@ export type TransferWhereUniqueInput = {
 
 export type Verifier = {
   __typename?: 'Verifier'
-  address: Scalars['String']
+  active: Scalars['Boolean']
+  imageUrl: Scalars['String']
+  name: Scalars['String']
   projects?: Maybe<Array<Project>>
+  walletAddress: Scalars['String']
 }
 
 export type VerifierListRelationFilter = {
@@ -483,35 +575,52 @@ export type VerifierOrderByRelationAggregateInput = {
 }
 
 export type VerifierOrderByWithRelationInput = {
-  address?: InputMaybe<SortOrder>
+  active?: InputMaybe<SortOrder>
+  imageUrl?: InputMaybe<SortOrder>
+  name?: InputMaybe<SortOrder>
   projects?: InputMaybe<ProjectOrderByRelationAggregateInput>
+  walletAddress?: InputMaybe<SortOrder>
 }
 
 export enum VerifierScalarFieldEnum {
-  Address = 'address',
+  Active = 'active',
+  ImageUrl = 'imageUrl',
+  Name = 'name',
+  WalletAddress = 'walletAddress',
 }
 
 export type VerifierWhereInput = {
   AND?: InputMaybe<Array<VerifierWhereInput>>
   NOT?: InputMaybe<Array<VerifierWhereInput>>
   OR?: InputMaybe<Array<VerifierWhereInput>>
-  address?: InputMaybe<StringFilter>
+  active?: InputMaybe<StringFilter>
+  imageUrl?: InputMaybe<StringFilter>
+  name?: InputMaybe<StringFilter>
   projects?: InputMaybe<ProjectListRelationFilter>
+  walletAddress?: InputMaybe<StringFilter>
 }
 
 export type VerifierWhereUniqueInput = {
-  address?: InputMaybe<Scalars['String']>
+  walletAddress?: InputMaybe<Scalars['String']>
 }
 
 export type ProjectFragmentFragment = {
   __typename?: 'Project'
   id: number
   name: string
+  about: string
+  images: Array<string>
   owner: string
   lat?: number | null
   lng?: number | null
   verified?: number | null
-  verifiers?: Array<{ __typename?: 'Verifier'; address: string }> | null
+  verifiers?: Array<{
+    __typename?: 'Verifier'
+    name: string
+    walletAddress: string
+    imageUrl: string
+    active: boolean
+  }> | null
 }
 
 export type ProjectsQueryVariables = Exact<{
@@ -532,11 +641,19 @@ export type ProjectsQuery = {
     __typename?: 'Project'
     id: number
     name: string
+    about: string
+    images: Array<string>
     owner: string
     lat?: number | null
     lng?: number | null
     verified?: number | null
-    verifiers?: Array<{ __typename?: 'Verifier'; address: string }> | null
+    verifiers?: Array<{
+      __typename?: 'Verifier'
+      name: string
+      walletAddress: string
+      imageUrl: string
+      active: boolean
+    }> | null
   }>
   projectsCount: { __typename?: 'AggregateCountOutput'; count: number }
 }
@@ -558,11 +675,19 @@ export type SearchProjectsQuery = {
     __typename?: 'Project'
     id: number
     name: string
+    about: string
+    images: Array<string>
     owner: string
     lat?: number | null
     lng?: number | null
     verified?: number | null
-    verifiers?: Array<{ __typename?: 'Verifier'; address: string }> | null
+    verifiers?: Array<{
+      __typename?: 'Verifier'
+      name: string
+      walletAddress: string
+      imageUrl: string
+      active: boolean
+    }> | null
   }>
 }
 
@@ -606,7 +731,13 @@ export type VerifiersQueryVariables = Exact<{
 
 export type VerifiersQuery = {
   __typename?: 'Query'
-  verifiers: Array<{ __typename?: 'Verifier'; address: string }>
+  verifiers: Array<{
+    __typename?: 'Verifier'
+    name: string
+    walletAddress: string
+    imageUrl: string
+    active: boolean
+  }>
   verifiersCount: { __typename?: 'AggregateCountOutput'; count: number }
 }
 
@@ -625,12 +756,17 @@ export const ProjectFragmentFragmentDoc = /*#__PURE__*/ gql`
   fragment ProjectFragment on Project {
     id
     name
+    about
+    images
     owner
     lat
     lng
     verified
     verifiers {
-      address
+      name
+      walletAddress
+      imageUrl
+      active
     }
   }
 `
@@ -890,7 +1026,10 @@ export const VerifiersDocument = /*#__PURE__*/ gql`
       orderBy: $orderBy
       where: $where
     ) {
-      address
+      name
+      walletAddress
+      imageUrl
+      active
     }
     verifiersCount(where: $where) {
       count

@@ -5,10 +5,12 @@ import { z } from 'zod'
 
 export const schemaCreateProject = z.object({
   name: z.string(),
+  about: z.string(),
   location: z.object({
     latitude: z.number(),
     longitude: z.number(),
   }),
+  images: z.any(),
 })
 
 export type FormTypeCreateProject = z.infer<typeof schemaCreateProject>

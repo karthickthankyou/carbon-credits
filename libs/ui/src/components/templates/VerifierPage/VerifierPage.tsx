@@ -20,7 +20,7 @@ export const VerifierPage = ({}: IVerifierPageProps) => {
   const [take, setTake] = useState(12)
   const { data, loading } = useProjectsQuery({
     variables: {
-      where: { verifiers: { none: { address: { equals: account } } } },
+      where: { verifiers: { none: { walletAddress: { equals: account } } } },
     },
   })
   return (

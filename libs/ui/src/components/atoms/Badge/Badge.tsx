@@ -2,14 +2,20 @@ import { ReactNode } from 'react'
 
 export interface IBadgeProps {
   children: ReactNode
+  className?: string
   size?: 'sm' | 'md' | 'lg'
   variant?: 'primary' | 'gray' | 'red' | 'yellow' | 'green'
 }
 
-const Badge = ({ children, size = 'md', variant = 'gray' }: IBadgeProps) => {
+const Badge = ({
+  children,
+  className = '',
+  size = 'md',
+  variant = 'gray',
+}: IBadgeProps) => {
   const sizeCls = {
-    sm: 'px-2 text-xs',
-    md: 'px-2 py-1.5 text-sm',
+    sm: 'px-2 py-0.5 text-xs ',
+    md: 'px-2 py-1 text-sm',
     lg: 'px-3 py-1.5',
   }
   const variantCls = {
@@ -21,7 +27,7 @@ const Badge = ({ children, size = 'md', variant = 'gray' }: IBadgeProps) => {
   }
   return (
     <span
-      className={`transition-all  py-1 px-2 items-center shadow justify-center duration-300  rounded-full ${sizeCls[size]} ${variantCls[variant]}`}
+      className={`${className} transition-all items-center shadow justify-center duration-300  rounded-full ${sizeCls[size]} ${variantCls[variant]}`}
     >
       {children}
     </span>

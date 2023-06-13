@@ -9,6 +9,8 @@ export type ActionType<T = string> = {
 
 export type CreateProjectPayload = {
   name: string
+  about: string
+  images: string[]
   lat: number
   lng: number
 }
@@ -22,11 +24,11 @@ export type BuyCreditsPayload = {
 export async function createProject({
   contract,
   account,
-  payload: { name, lat, lng },
+  payload: { name, lat, lng, about, images },
 }: ActionType<CreateProjectPayload>): Promise<boolean> {
   try {
     const result = await contract.methods
-      .createProject(name, lat, lng)
+      .createProject(name, about, images, lat, lng)
       .send({ from: account })
     if (result.status) {
       return true
@@ -41,11 +43,15 @@ export async function createProject({
 export async function addVerifier({
   contract,
   account,
-  payload: { verifier },
-}: ActionType<{ verifier: string }>): Promise<boolean> {
+  payload: { walletAddress, name, imageUrl },
+}: ActionType<{
+  walletAddress: string
+  name: string
+  imageUrl: string
+}>): Promise<boolean> {
   try {
     const result = await contract.methods
-      .addVerifier(verifier)
+      .addVerifier(walletAddress, name, imageUrl)
       .send({ from: account })
     if (result.status) {
       return true

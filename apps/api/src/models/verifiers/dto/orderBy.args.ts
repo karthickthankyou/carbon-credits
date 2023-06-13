@@ -12,7 +12,13 @@ export class VerifierOrderByWithRelationInput
     >
 {
   @Field(() => Prisma.SortOrder, { nullable: true })
-  address: Prisma.SortOrder
+  walletAddress: Prisma.SortOrder
+  @Field(() => Prisma.SortOrder, { nullable: true })
+  imageUrl: Prisma.SortOrder
+  @Field(() => Prisma.SortOrder, { nullable: true })
+  active: Prisma.SortOrder
+  @Field(() => Prisma.SortOrder, { nullable: true })
+  name: Prisma.SortOrder
   @Field(() => ProjectOrderByRelationAggregateInput, { nullable: true })
   projects: ProjectOrderByRelationAggregateInput
   // Todo: Add properties

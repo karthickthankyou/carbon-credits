@@ -15,8 +15,12 @@ export class ProjectOrderByWithRelationInput
       Prisma.ProjectOrderByWithRelationInput
     >
 {
+  @Field(() => Prisma.SortOrder, { nullable: true })
+  about: Prisma.SortOrder
+  @Field(() => Prisma.SortOrder, { nullable: true })
+  images: Prisma.SortOrder
   @Field(() => CreationOrderByRelationAggregateInput, { nullable: true })
-  Creation: CreationOrderByRelationAggregateInput
+  creations: CreationOrderByRelationAggregateInput
   @Field(() => Prisma.SortOrder, { nullable: true })
   lat: Prisma.SortOrder
   @Field(() => Prisma.SortOrder, { nullable: true })

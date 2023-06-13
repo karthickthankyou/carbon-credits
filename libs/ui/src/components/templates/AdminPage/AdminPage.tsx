@@ -1,6 +1,8 @@
 import { useVerifiersQuery } from '@carbon-credits/network/src/generated'
+import { Controller } from 'react-hook-form'
+import { useFormAddVerifier } from '@carbon-credits/forms/src/addVerifier'
 import { ShowData } from '../../organisms/ShowData'
-import { SetStateAction, useState } from 'react'
+import { useState } from 'react'
 import { PlainButton } from '../../atoms/PlainButton'
 
 import { useAsync } from '@carbon-credits/hooks/async'
@@ -11,8 +13,8 @@ import { Form } from '../../atoms/Form'
 import { Button } from '../../atoms/Button'
 import { Dialog } from '../../atoms/Dialog'
 import { useAccount } from '@carbon-credits/hooks/web3'
-import { notification$ } from '@carbon-credits/util/subjects'
 import { IconPlus } from '@tabler/icons-react'
+import { uploadImagesIPFS } from '@carbon-credits/util'
 
 export interface IAdminPageProps {}
 
@@ -35,7 +37,7 @@ export const AdminPage = ({}: IAdminPageProps) => {
         }}
       >
         {data?.verifiers.map((verifier) => (
-          <div key={verifier.address}>{verifier.address}</div>
+          <div key={verifier.walletAddress}>{verifier.walletAddress}</div>
         ))}
       </ShowData>
     </div>
@@ -44,9 +46,16 @@ export const AdminPage = ({}: IAdminPageProps) => {
 
 export const CreateVerifier = () => {
   const [open, setOpen] = useState(false)
-  const [address, setAddress] = useState('')
+  const {
+    register,
+    control,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useFormAddVerifier()
   const { account, contract } = useAccount()
   const [{ data, loading, error }, addVerifierFunction] = useAsync(addVerifier)
+
   return (
     <div>
       <div className="flex justify-end">
@@ -59,39 +68,51 @@ export const CreateVerifier = () => {
       </div>
       <Dialog open={open} setOpen={setOpen} title={'Add verifier'}>
         <Form
-          onSubmit={async (e) => {
-            e.preventDefault()
-
-            // get form data
-            const data = new FormData(e.currentTarget)
-            const address = data.get('address') as string
-            console.log('Address:', address)
+          onSubmit={handleSubmit(async ({ imageUrl, name, walletAddress }) => {
+            console.log({ imageUrl, name, walletAddress })
             if (!account || !contract) {
               console.error('account or contract not found.')
               return
             }
-            if (!address) {
-              notification$.next({ message: 'Address is required.' })
-              return
-            }
+
+            const ipfsImages = await uploadImagesIPFS(imageUrl)
+
             await addVerifierFunction({
               account,
               contract,
-              payload: { verifier: address },
+              payload: { imageUrl: ipfsImages[0], name, walletAddress },
             })
-          }}
+          })}
         >
-          <HtmlLabel>
-            <HtmlInput
-              value={address}
-              name="address"
-              onChange={(e) => setAddress(e.target.value)}
-            />
+          <HtmlLabel title="Name" error={errors.name?.message}>
+            <HtmlInput {...register('name')} />
           </HtmlLabel>
+          <HtmlLabel
+            title="Wallet address"
+            error={errors.walletAddress?.message}
+          >
+            <HtmlInput {...register('walletAddress')} />
+          </HtmlLabel>
+          <Controller
+            control={control}
+            name="imageUrl"
+            render={({ field }) => (
+              <HtmlLabel
+                title="Images"
+                error={errors.imageUrl?.message?.toString()}
+              >
+                <HtmlInput
+                  type="file"
+                  onChange={(e) => field.onChange(e?.target?.files)}
+                />
+              </HtmlLabel>
+            )}
+          />
           <Button disabled={Boolean(data)} loading={loading} type="submit">
             Add verifier
           </Button>
         </Form>
+        {data ? <div>Verifier created successfully</div> : null}
       </Dialog>
       {data ? <div>Verifier added. 🎉🎉🎉</div> : null}
     </div>

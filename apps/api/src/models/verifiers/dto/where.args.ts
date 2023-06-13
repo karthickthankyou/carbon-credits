@@ -1,6 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { Prisma } from '@prisma/client'
-import { RestrictProperties, StringFilter } from 'src/common/dtos/common.input'
+import {
+  BoolFilter,
+  RestrictProperties,
+  StringFilter,
+} from 'src/common/dtos/common.input'
 import { ProjectListRelationFilter } from 'src/models/projects/dto/where.args'
 
 @InputType()
@@ -12,7 +16,7 @@ export class VerifierWhereUniqueInput
     >
 {
   @Field(() => String, { nullable: true })
-  address: string
+  walletAddress: string
 }
 
 @InputType()
@@ -20,7 +24,13 @@ export class VerifierWhereInput
   implements RestrictProperties<VerifierWhereInput, Prisma.VerifierWhereInput>
 {
   @Field(() => StringFilter, { nullable: true })
-  address: StringFilter
+  walletAddress: StringFilter
+  @Field(() => StringFilter, { nullable: true })
+  imageUrl: StringFilter
+  @Field(() => StringFilter, { nullable: true })
+  active: BoolFilter
+  @Field(() => StringFilter, { nullable: true })
+  name: StringFilter
   @Field(() => ProjectListRelationFilter, { nullable: true })
   projects: ProjectListRelationFilter
 

@@ -14,6 +14,8 @@ contract CarbonCredits is Initializable {
     struct Project {
         address owner;
         string name;
+        string about;
+        string[] images;
         int256 lat;
         int256 lng;
     }
@@ -24,19 +26,33 @@ contract CarbonCredits is Initializable {
         bool forSale;
     }
 
+    struct Verifier {
+        string name;
+        string imageUrl;
+        address walletAddress;
+        bool active;
+    }
+
     Project[] public projects;
     mapping(uint256 => address[]) public projectVerifiers;
-    mapping(address => bool) public verifiers;
+    mapping(address => Verifier) public verifiers;
     mapping(address => mapping(uint256 => Inventory)) public inventories;
 
     event ProjectCreated(
         address owner,
         uint256 projectId,
         string name,
+        string about,
+        string[] images,
         int256 lat,
         int256 lng
     );
-    event VerifierAdded(address verifier);
+    event VerifierAdded(
+        string name,
+        string imageUrl,
+        address walletAddress,
+        bool active
+    );
 
     event ProjectVerified(uint256 projectId, address verifier);
     event CreditsAdded(
@@ -62,30 +78,52 @@ contract CarbonCredits is Initializable {
 
     function createProject(
         string memory _name,
+        string memory _about,
+        string[] memory _images,
         int256 _lat,
         int256 _lng
     ) public {
         uint256 projectId = projects.length;
-        projects.push(Project(msg.sender, _name, _lat, _lng));
+        projects.push(Project(msg.sender, _name, _about, _images, _lat, _lng));
 
-        emit ProjectCreated(msg.sender, projectId, _name, _lat, _lng);
+        emit ProjectCreated(
+            msg.sender,
+            projectId,
+            _name,
+            _about,
+            _images,
+            _lat,
+            _lng
+        );
     }
 
-    function addVerifier(address verifier) public {
+    function addVerifier(
+        address walletAddress,
+        string memory name,
+        string memory imageUrl
+    ) public {
         require(
             msg.sender == owner,
             'Only the contract owner can add verifiers'
         );
-        require(!verifiers[verifier], 'The address is already a verifier');
+        require(
+            !verifiers[walletAddress].active,
+            'The address is already a verifier'
+        );
 
-        verifiers[verifier] = true;
+        verifiers[walletAddress] = Verifier(
+            name,
+            imageUrl,
+            walletAddress,
+            true
+        );
 
-        emit VerifierAdded(verifier);
+        emit VerifierAdded(name, imageUrl, walletAddress, true);
     }
 
     function verifyProject(uint256 projectId) public {
         require(
-            verifiers[msg.sender],
+            verifiers[msg.sender].active,
             'Only registered verifiers can verify projects'
         );
         address[] storage verifiersForProject = projectVerifiers[projectId];

@@ -11,11 +11,13 @@ datasource db {
 }
 
 model Project {
-    id    Int    @id
-    name  String
-    owner String
-    lat   Float
-    lng   Float
+    id     Int      @id
+    name   String
+    about  String
+    images String[]
+    owner  String
+    lat    Float
+    lng    Float
 
     verifiers   Verifier[]
     inventories Inventory[]
@@ -25,8 +27,11 @@ model Project {
 }
 
 model Verifier {
-    address  String    @id
-    projects Project[]
+    walletAddress String    @id
+    name          String
+    imageUrl      String
+    active        Boolean
+    projects      Project[]
 }
 
 model Creation {

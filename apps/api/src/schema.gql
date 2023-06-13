@@ -26,6 +26,8 @@ type AggregateCountOutput {
 type Project {
   lat: Float
   lng: Float
+  about: String!
+  images: [String!]!
   id: Int!
   name: String!
   owner: String!
@@ -37,7 +39,10 @@ type Project {
 }
 
 type Verifier {
-  address: String!
+  walletAddress: String!
+  imageUrl: String!
+  active: Boolean!
+  name: String!
   projects: [Project!]
 }
 
@@ -155,7 +160,9 @@ input ProjectRelationFilter {
 }
 
 input ProjectWhereInput {
-  Creation: CreationListRelationFilter
+  about: StringFilter
+  images: StringListFilter
+  creations: CreationListRelationFilter
   lat: FloatFilter
   lng: FloatFilter
   id: IntFilter
@@ -168,6 +175,14 @@ input ProjectWhereInput {
   AND: [ProjectWhereInput!]
   OR: [ProjectWhereInput!]
   NOT: [ProjectWhereInput!]
+}
+
+input StringListFilter {
+  equals: [String!]
+  has: String
+  hasEvery: [String!]
+  hasSome: [String!]
+  isEmpty: Boolean
 }
 
 input CreationListRelationFilter {
@@ -207,7 +222,10 @@ input VerifierListRelationFilter {
 }
 
 input VerifierWhereInput {
-  address: StringFilter
+  walletAddress: StringFilter
+  imageUrl: StringFilter
+  active: StringFilter
+  name: StringFilter
   projects: ProjectListRelationFilter
   AND: [VerifierWhereInput!]
   OR: [VerifierWhereInput!]
@@ -281,7 +299,9 @@ enum SortOrder {
 }
 
 input ProjectOrderByWithRelationInput {
-  Creation: CreationOrderByRelationAggregateInput
+  about: SortOrder
+  images: SortOrder
+  creations: CreationOrderByRelationAggregateInput
   lat: SortOrder
   lng: SortOrder
   id: SortOrder
@@ -341,6 +361,8 @@ input ProjectWhereUniqueInput {
 enum ProjectScalarFieldEnum {
   id
   name
+  about
+  images
   owner
   lat
   lng
@@ -398,7 +420,10 @@ enum TransferScalarFieldEnum {
 }
 
 input VerifierOrderByWithRelationInput {
-  address: SortOrder
+  walletAddress: SortOrder
+  imageUrl: SortOrder
+  active: SortOrder
+  name: SortOrder
   projects: ProjectOrderByRelationAggregateInput
 }
 
@@ -407,11 +432,14 @@ input ProjectOrderByRelationAggregateInput {
 }
 
 input VerifierWhereUniqueInput {
-  address: String
+  walletAddress: String
 }
 
 enum VerifierScalarFieldEnum {
-  address
+  walletAddress
+  name
+  imageUrl
+  active
 }
 
 input CreationOrderByWithRelationInput {

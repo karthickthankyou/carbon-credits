@@ -59,6 +59,13 @@ export const useAccount = () => {
   const loadBlockchainData = async () => {
     const web3 = window?.web3
     const accounts = await web3?.eth.getAccounts()
+
+    if (accounts && accounts.length > 0) {
+      setAccount(accounts[0])
+    } else {
+      console.error('No accounts detected')
+      return // Stop further execution if no accounts are detected
+    }
     setAccount(accounts[0])
 
     // Create a new instance of the contract
@@ -73,7 +80,7 @@ export const useAccount = () => {
     setIsOwner(accounts[0] === contractOwner)
 
     const _isVerifier = await contract.methods.verifiers(accounts[0]).call()
-    setIsVerifier(_isVerifier)
+    setIsVerifier(_isVerifier.active)
   }
 
   return { account, contract, isOwner, isVerifier }

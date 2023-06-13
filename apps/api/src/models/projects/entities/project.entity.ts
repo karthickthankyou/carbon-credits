@@ -4,6 +4,8 @@ import { RestrictProperties } from 'src/common/dtos/common.input'
 
 @ObjectType()
 export class Project implements RestrictProperties<Project, ProjectType> {
+  about: string
+  images: string[]
   id: number
   name: string
   owner: string

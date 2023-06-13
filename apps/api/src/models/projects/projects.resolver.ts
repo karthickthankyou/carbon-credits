@@ -49,6 +49,10 @@ export class ProjectsResolver {
         ...where,
         lat: { lte: nw_lat, gte: se_lat },
         lng: { gte: nw_lng, lte: se_lng },
+        verifiers: { some: {} },
+        inventories: {
+          some: {},
+        },
       },
     })
   }

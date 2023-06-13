@@ -41,7 +41,7 @@ export class VerifiersResolver {
   @ResolveField(() => [Project], { nullable: true })
   projects(@Parent() parent: Verifier) {
     return this.prisma.project.findMany({
-      where: { verifiers: { some: { address: parent.address } } },
+      where: { verifiers: { some: { walletAddress: parent.walletAddress } } },
     })
   }
 }

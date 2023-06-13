@@ -6,7 +6,10 @@ export const ProjectFragment = gql`
     name
     owner
     verifiers {
-      address
+      name
+      walletAddress
+      imageUrl
+      active
     }
   }
 `

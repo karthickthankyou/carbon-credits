@@ -4,5 +4,8 @@ import { RestrictProperties } from 'src/common/dtos/common.input'
 
 @ObjectType()
 export class Verifier implements RestrictProperties<Verifier, VerifierType> {
-  address: string
+  walletAddress: string
+  imageUrl: string
+  active: boolean
+  name: string
 }

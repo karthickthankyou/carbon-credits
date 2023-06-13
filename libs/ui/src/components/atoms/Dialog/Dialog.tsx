@@ -47,7 +47,7 @@ export const Dialog = ({
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-full p-4 text-center">
+          <div className="flex items-center justify-center min-h-full p-4 text-center ">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -58,7 +58,7 @@ export const Dialog = ({
               leaveTo="opacity-0 scale-95"
             >
               <HeadlessUIDialog.Panel
-                className={`w-full  p-4 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl ${widthClassName}`}
+                className={`w-full  p-4 overflow-hidden text-left rounded align-middle transition-all transform bg-white shadow-xl ${widthClassName}`}
               >
                 <button
                   type="button"

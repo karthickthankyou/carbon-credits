@@ -5,6 +5,7 @@ import {
   IntFilter,
   RestrictProperties,
   StringFilter,
+  StringListFilter,
 } from 'src/common/dtos/common.input'
 import { CreationListRelationFilter } from 'src/models/creations/dto/where.args'
 import { InventoryListRelationFilter } from 'src/models/inventories/dto/where.args'
@@ -25,8 +26,12 @@ export class ProjectWhereUniqueInput
 export class ProjectWhereInput
   implements RestrictProperties<ProjectWhereInput, Prisma.ProjectWhereInput>
 {
+  @Field(() => StringFilter, { nullable: true })
+  about: StringFilter
+  @Field(() => StringListFilter, { nullable: true })
+  images: StringListFilter
   @Field(() => CreationListRelationFilter, { nullable: true })
-  Creation: CreationListRelationFilter
+  creations: CreationListRelationFilter
   @Field(() => FloatFilter, { nullable: true })
   lat: FloatFilter
   @Field(() => FloatFilter, { nullable: true })

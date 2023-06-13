@@ -4,12 +4,17 @@ export const ProjectFragment = gql`
   fragment ProjectFragment on Project {
     id
     name
+    about
+    images
     owner
     lat
     lng
     verified
     verifiers {
-      address
+      name
+      walletAddress
+      imageUrl
+      active
     }
   }
 `
@@ -111,7 +116,10 @@ export const verifiers = gql`
       orderBy: $orderBy
       where: $where
     ) {
-      address
+      name
+      walletAddress
+      imageUrl
+      active
     }
     verifiersCount(where: $where) {
       count

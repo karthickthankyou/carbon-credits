@@ -1,4 +1,4 @@
-export const contractAddress = '0x8AC5696046d2AEa1C15506b29281B5e95Cb53C8d'
+export const contractAddress = '0x7aBbDD2828089CF569ec789866451bCDAE7D5C4F'
 export const abi = [
   {
     anonymous: false,
@@ -160,6 +160,18 @@ export const abi = [
       },
       {
         indexed: false,
+        internalType: 'string',
+        name: 'about',
+        type: 'string',
+      },
+      {
+        indexed: false,
+        internalType: 'string[]',
+        name: 'images',
+        type: 'string[]',
+      },
+      {
+        indexed: false,
         internalType: 'int256',
         name: 'lat',
         type: 'int256',
@@ -198,9 +210,27 @@ export const abi = [
     inputs: [
       {
         indexed: false,
+        internalType: 'string',
+        name: 'name',
+        type: 'string',
+      },
+      {
+        indexed: false,
+        internalType: 'string',
+        name: 'imageUrl',
+        type: 'string',
+      },
+      {
+        indexed: false,
         internalType: 'address',
-        name: 'verifier',
+        name: 'walletAddress',
         type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'bool',
+        name: 'active',
+        type: 'bool',
       },
     ],
     name: 'VerifierAdded',
@@ -246,8 +276,18 @@ export const abi = [
     inputs: [
       {
         internalType: 'address',
-        name: 'verifier',
+        name: 'walletAddress',
         type: 'address',
+      },
+      {
+        internalType: 'string',
+        name: 'name',
+        type: 'string',
+      },
+      {
+        internalType: 'string',
+        name: 'imageUrl',
+        type: 'string',
       },
     ],
     name: 'addVerifier',
@@ -284,6 +324,16 @@ export const abi = [
         internalType: 'string',
         name: '_name',
         type: 'string',
+      },
+      {
+        internalType: 'string',
+        name: '_about',
+        type: 'string',
+      },
+      {
+        internalType: 'string[]',
+        name: '_images',
+        type: 'string[]',
       },
       {
         internalType: 'int256',
@@ -400,6 +450,11 @@ export const abi = [
         type: 'string',
       },
       {
+        internalType: 'string',
+        name: 'about',
+        type: 'string',
+      },
+      {
         internalType: 'int256',
         name: 'lat',
         type: 'int256',
@@ -442,8 +497,23 @@ export const abi = [
     name: 'verifiers',
     outputs: [
       {
+        internalType: 'string',
+        name: 'name',
+        type: 'string',
+      },
+      {
+        internalType: 'string',
+        name: 'imageUrl',
+        type: 'string',
+      },
+      {
+        internalType: 'address',
+        name: 'walletAddress',
+        type: 'address',
+      },
+      {
         internalType: 'bool',
-        name: '',
+        name: 'active',
         type: 'bool',
       },
     ],
