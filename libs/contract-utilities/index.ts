@@ -19,6 +19,7 @@ export type BuyCreditsPayload = {
   projectId: number
   quantity: number
   price: number
+  forSale: boolean
 }
 
 export async function createProject({
@@ -66,15 +67,17 @@ export async function addVerifier({
 export async function addCredits({
   contract,
   account,
-  payload: { projectId, quantity, price },
+  payload: { projectId, quantity, price, forSale },
 }: ActionType<{
   projectId: number
   quantity: number
   price: number
+  forSale: boolean
 }>): Promise<boolean> {
+  console.log('forSale ', forSale)
   try {
     const result = await contract.methods
-      .addCredits(projectId, quantity, price)
+      .addCredits(projectId, quantity, price, forSale)
       .send({ from: account })
     if (result.status) {
       return true
@@ -108,13 +111,18 @@ export async function verifyProject({
 export async function buyCredits({
   contract,
   account,
-  payload: { projectId, quantity, price },
+  payload: { projectId, quantity, price, forSale },
 }: ActionType<BuyCreditsPayload>): Promise<boolean> {
   try {
-    const totalCost = Web3.utils.toWei((quantity * price).toString(), 'kwei')
+    const totalCost = Web3.utils.toWei(
+      (quantity * price + 10).toString(),
+      'wei',
+    )
+
+    console.log('totalCost ', totalCost)
 
     const result = await contract.methods
-      .buyCredits(projectId, account, quantity)
+      .buyCredits(projectId, account, quantity, forSale)
       .send({ from: account, value: totalCost })
     if (result.status) {
       return true

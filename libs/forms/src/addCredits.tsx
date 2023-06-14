@@ -6,11 +6,12 @@ import { ReactNode } from 'react'
 export const formSchemaAddCredits = z.object({
   quantity: z.number(),
   price: z.number(),
+  forSale: z.boolean().default(false),
 })
 
 export type FormTypeAddCredits = z.infer<typeof formSchemaAddCredits>
 
-export const userFormAddCredits = () =>
+export const useFormAddCredits = () =>
   useForm<FormTypeAddCredits>({
     resolver: zodResolver(formSchemaAddCredits),
   })
@@ -20,6 +21,6 @@ export const FormProviderAddCredits = ({
 }: {
   children: ReactNode
 }) => {
-  const methods = userFormAddCredits()
+  const methods = useFormAddCredits()
   return <FormProvider {...methods}>{children}</FormProvider>
 }

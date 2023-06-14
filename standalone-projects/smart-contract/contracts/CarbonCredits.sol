@@ -142,7 +142,8 @@ contract CarbonCredits is Initializable {
     function addCredits(
         uint256 projectId,
         uint256 quantity,
-        uint256 price
+        uint256 price,
+        bool forSale
     ) public {
         require(
             msg.sender == projects[projectId].owner,
@@ -156,6 +157,7 @@ contract CarbonCredits is Initializable {
         Inventory storage senderInventory = inventories[msg.sender][projectId];
         senderInventory.credits += quantity;
         senderInventory.price = price;
+        senderInventory.forSale = forSale;
 
         emit CreditsAdded(
             projectId,
@@ -175,7 +177,8 @@ contract CarbonCredits is Initializable {
     function buyCredits(
         uint256 projectId,
         address from,
-        uint256 quantity
+        uint256 quantity,
+        bool forSale
     ) public payable {
         Inventory storage sellerInventory = inventories[from][projectId];
         require(
@@ -185,18 +188,19 @@ contract CarbonCredits is Initializable {
         require(sellerInventory.forSale, 'Credits are not for sale');
 
         uint256 totalCost = sellerInventory.price * quantity;
-        uint256 commission = calculateCommission(totalCost);
+        // uint256 commission = calculateCommission(totalCost);
         require(
-            msg.value >= totalCost + commission,
+            msg.value >= totalCost,
             'Not enough Ether sent to cover cost and commission'
         );
 
         // Transfer the commission to the owner and the cost to the seller
-        payable(owner).transfer(commission);
+        // payable(owner).transfer(commission);
         payable(from).transfer(totalCost);
 
         sellerInventory.credits -= quantity;
         inventories[msg.sender][projectId].credits += quantity;
+        inventories[msg.sender][projectId].forSale = forSale;
 
         emit CreditsTransferred(projectId, from, msg.sender, quantity);
         emit InventoryUpdated(

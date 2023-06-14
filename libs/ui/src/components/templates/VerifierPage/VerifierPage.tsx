@@ -1,4 +1,5 @@
 import { useProjectsQuery } from '@carbon-credits/network/src/generated'
+import { ProjectCard } from '@carbon-credits/ui/src/components/organisms/ProjectCard'
 import { useState } from 'react'
 import { ShowData } from '../../organisms/ShowData'
 import { useAccount } from '@carbon-credits/hooks/web3'
@@ -37,9 +38,7 @@ export const VerifierPage = ({}: IVerifierPageProps) => {
     >
       {data?.projects.map((project) => (
         <div>
-          <div>{project.id}</div>
-          <div>{project.name}</div>
-          <div className="break-words">{project.owner}</div>
+          <ProjectCard project={project} />
           <VerifyDialog projectId={project.id} />
         </div>
       ))}
@@ -56,7 +55,12 @@ export const VerifyDialog = ({ projectId }: { projectId: number }) => {
   console.log('success? data ', data)
   return (
     <div>
-      <PlainButton onClick={() => setOpen(true)}>Verify project</PlainButton>
+      <PlainButton
+        className="underline underline-offset-4"
+        onClick={() => setOpen(true)}
+      >
+        Verify project
+      </PlainButton>
       <Dialog open={open} setOpen={setOpen} title={'Add verifier'}>
         <Form
           onSubmit={async (e) => {

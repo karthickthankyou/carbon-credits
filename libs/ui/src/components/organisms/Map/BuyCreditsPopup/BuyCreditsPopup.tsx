@@ -16,6 +16,7 @@ import { useAsync } from '@carbon-credits/hooks/async'
 
 import { useAccount } from '@carbon-credits/hooks/web3'
 import { buyCredits } from '@carbon-credits/contract-utilities'
+import { Switch } from '../../../atoms/Switch'
 
 export const BuyCreditsPopup = ({
   inventory,
@@ -35,7 +36,7 @@ export const BuyCreditsPopup = ({
   return (
     <div className="flex gap-2 text-left border-t-2 border-white bg-white/50 backdrop-blur-sm">
       <Form
-        onSubmit={handleSubmit(async ({ quantity }) => {
+        onSubmit={handleSubmit(async ({ quantity, forSale }) => {
           if (!account || !contract) {
             notification$.next({ message: 'You are not logged in.' })
             return
@@ -47,6 +48,7 @@ export const BuyCreditsPopup = ({
               projectId: inventory.projectId,
               quantity,
               price: inventory.price,
+              forSale,
             },
           })
         })}
@@ -59,6 +61,10 @@ export const BuyCreditsPopup = ({
             className="w-full p-2 text-lg font-light"
             {...register('quantity', { valueAsNumber: true })}
           />
+        </HtmlLabel>
+
+        <HtmlLabel title="For sale" error={errors.forSale?.message}>
+          <Switch {...register('forSale')} />
         </HtmlLabel>
 
         <Button type="submit" loading={loading} className="w-full mt-2">

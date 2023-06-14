@@ -14,13 +14,11 @@ const Template: ComponentStory<typeof ShowHide> = (args) => (
 export const Primary = Template.bind({})
 Primary.args = {
   children: 'Content showing...',
-  show: true,
 }
 Primary.parameters = {}
 export const Hidden = Template.bind({})
 Hidden.args = {
   children: 'Wow. You have discovered the hidden content!!!',
-  show: false,
 }
 Hidden.parameters = {}
 

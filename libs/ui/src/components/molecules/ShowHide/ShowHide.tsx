@@ -1,13 +1,28 @@
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
+import { PlainButton } from '../../atoms/PlainButton'
 
 export interface IShowHideProps {
-  show: boolean
   children: ReactNode
+  showText?: string
+  hideText?: string
 }
 
 export const ShowHide = ({
-  show,
   children,
+  showText = 'Show',
+  hideText = 'Hide',
 }: IShowHideProps): JSX.Element | null => {
-  return show ? <>{children}</> : null
+  const [show, setShow] = useState(false)
+
+  return (
+    <div>
+      {show ? children : null}
+      <PlainButton
+        className="text-xs"
+        onClick={() => setShow((state) => !state)}
+      >
+        {show ? hideText : showText}
+      </PlainButton>
+    </div>
+  )
 }

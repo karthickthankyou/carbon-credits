@@ -1,0 +1,1 @@
+export { VerifierCard } from './VerifierCard'

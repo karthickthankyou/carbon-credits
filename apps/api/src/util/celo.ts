@@ -1,4 +1,4 @@
-export const contractAddress = '0x7aBbDD2828089CF569ec789866451bCDAE7D5C4F'
+export const contractAddress = '0x5C6256d50Db5b21C362bE98335704D5d120AcF09'
 export const abi = [
   {
     anonymous: false,
@@ -266,6 +266,11 @@ export const abi = [
         name: 'price',
         type: 'uint256',
       },
+      {
+        internalType: 'bool',
+        name: 'forSale',
+        type: 'bool',
+      },
     ],
     name: 'addCredits',
     outputs: [],
@@ -311,6 +316,11 @@ export const abi = [
         internalType: 'uint256',
         name: 'quantity',
         type: 'uint256',
+      },
+      {
+        internalType: 'bool',
+        name: 'forSale',
+        type: 'bool',
       },
     ],
     name: 'buyCredits',

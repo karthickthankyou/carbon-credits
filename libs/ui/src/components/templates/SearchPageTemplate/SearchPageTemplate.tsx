@@ -47,6 +47,7 @@ import { useAccount } from '@carbon-credits/hooks/web3'
 import { useAsync } from '@carbon-credits/hooks/async'
 import { buyCredits } from '@carbon-credits/contract-utilities'
 import { HtmlInput } from '../../atoms/HtmlInput'
+import { Switch } from '../../atoms/Switch'
 
 export interface ISearchPageTemplateProps {
   initialProps: {
@@ -326,14 +327,12 @@ export const AddCreditsDialog = ({
       >
         Buy credits
       </PlainButton>
-      <Dialog open={open} setOpen={setOpen} title={'Owners'}>
+      <Dialog open={open} setOpen={setOpen} title={'Buy credits'}>
         <div>{inventory.price}</div>
         <div>{inventory.balance}</div>
         <div>{inventory?.project?.name}</div>
         <Form
-          onSubmit={handleSubmit(async ({ quantity }) => {
-            console.log('data ', { quantity })
-
+          onSubmit={handleSubmit(async ({ quantity, forSale }) => {
             if (!contract) {
               return
             }
@@ -345,6 +344,7 @@ export const AddCreditsDialog = ({
                 projectId: inventory.projectId,
                 quantity,
                 price: inventory.price,
+                forSale,
               },
             })
           })}
@@ -355,12 +355,15 @@ export const AddCreditsDialog = ({
               {...register('quantity', { valueAsNumber: true })}
             />
           </HtmlLabel>
+          <HtmlLabel title="For sale" error={errors.forSale?.message}>
+            <Switch {...register('forSale')} />
+          </HtmlLabel>
 
           <Button loading={loading} type="submit">
             Add credits
           </Button>
         </Form>
-        {data ? <div>Credits added successfully. 🎉🎉🎉</div> : null}
+        {data ? <div>🎉 🎉 🎉Credits added successfully. 🎉 🎉 🎉</div> : null}
         {error ? (
           <div className="mt-1 text-sm text-red-800">
             Error for developers: {error}

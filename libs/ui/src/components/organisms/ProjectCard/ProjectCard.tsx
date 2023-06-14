@@ -1,9 +1,10 @@
 import { ProjectsQuery } from '@carbon-credits/network/src/generated'
+import { Controller } from 'react-hook-form'
 import { PlainButton } from '../../atoms/PlainButton'
 import { useAccount } from '@carbon-credits/hooks/web3'
 import { memo, useState } from 'react'
 import { Dialog } from '../../atoms/Dialog'
-import { userFormAddCredits } from '@carbon-credits/forms/src/addCredits'
+import { useFormAddCredits } from '@carbon-credits/forms/src/addCredits'
 import { Form } from '../../atoms/Form'
 import { HtmlLabel } from '../../atoms/HtmlLabel'
 import { HtmlInput } from '../../atoms/HtmlInput'
@@ -12,7 +13,9 @@ import { useAsync } from '@carbon-credits/hooks/async'
 import { addCredits } from '@carbon-credits/contract-utilities'
 import { useFetchIPFS } from '@carbon-credits/util'
 import Badge from '../../atoms/Badge'
-import { IconAlertCircle, IconCheck } from '@tabler/icons-react'
+import { IconAlertCircle, IconCheck, IconSettings } from '@tabler/icons-react'
+import { IconText } from '../../atoms/IconText'
+import { Switch } from '../../atoms/Switch'
 
 export type ProjectQuery = ProjectsQuery['projects'][number]
 
@@ -28,6 +31,7 @@ export const ProjectCard = memo(({ project }: IProjectCardProps) => {
   const { account, contract, isOwner } = useAccount()
 
   const { images } = useFetchIPFS(project.images)
+  console.log('images ', images)
 
   return (
     <div>
@@ -44,22 +48,22 @@ export const ProjectCard = memo(({ project }: IProjectCardProps) => {
           <div className="mt-1">
             {project.verified ? (
               <div className="flex items-center gap-1 text-sm">
-                <IconCheck /> Verified {project.verified}.
+                <IconCheck /> {project.verified} Verified.
               </div>
             ) : (
               <div className="flex items-center gap-1 text-sm">
-                <IconAlertCircle /> Unverified
+                <IconText>Unverified</IconText>
               </div>
             )}
           </div>
           {project.owner === account && project.verified ? (
             <AddCreditsDialog project={project} />
           ) : null}
-          {project.owner !== account ? <PlainButton>Buy</PlainButton> : null}
+          {project.owner !== account && project.verified ? (
+            <PlainButton>Buy</PlainButton>
+          ) : null}
+          {isOwner ? <OwnerDialog name={project.name} /> : null}
         </div>
-      </div>
-      <div className="mt-2 text-center">
-        {isOwner ? <OwnerDialog name={project.name} /> : null}
       </div>
     </div>
   )
@@ -72,7 +76,8 @@ export const AddCreditsDialog = ({ project }: IProjectCardProps) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = userFormAddCredits()
+    control,
+  } = useFormAddCredits()
   const [{ data, loading, error }, addCreditsFunction] = useAsync(addCredits)
   return (
     <>
@@ -84,7 +89,7 @@ export const AddCreditsDialog = ({ project }: IProjectCardProps) => {
       </PlainButton>
       <Dialog open={open} setOpen={setOpen} title={'Owners'}>
         <Form
-          onSubmit={handleSubmit(async ({ quantity, price }) => {
+          onSubmit={handleSubmit(async ({ quantity, price, forSale }) => {
             console.log('data ', { quantity })
 
             if (!contract) {
@@ -94,7 +99,7 @@ export const AddCreditsDialog = ({ project }: IProjectCardProps) => {
             await addCreditsFunction({
               account,
               contract,
-              payload: { projectId: project.id, quantity, price },
+              payload: { projectId: project.id, quantity, price, forSale },
             })
           })}
         >
@@ -110,6 +115,26 @@ export const AddCreditsDialog = ({ project }: IProjectCardProps) => {
               {...register('price', { valueAsNumber: true })}
             />
           </HtmlLabel>
+          <Controller
+            control={control}
+            name="forSale"
+            render={({ field }) => {
+              return (
+                <HtmlLabel error={errors.forSale?.message} title="For sale?">
+                  <Switch
+                    name="forSale"
+                    checked={field.value || false}
+                    inputProps={{ 'aria-label': 'controlled' }}
+                    onChange={(e) => {
+                      console.log(e.target.checked)
+                      return field.onChange(e.target.checked)
+                    }}
+                  />
+                </HtmlLabel>
+              )
+            }}
+          />
+
           <Button loading={loading} type="submit">
             Add credits
           </Button>
@@ -132,15 +157,13 @@ export const OwnerDialog = ({ name }: { name: string }) => {
 
   return (
     <>
-      <PlainButton
-        className="text-sm underline underline-offset-4"
-        onClick={() => setOpen(true)}
-      >
-        Owner
+      <PlainButton className="text-sm" onClick={() => setOpen(true)}>
+        <IconText Icon={<IconSettings />}>Owner</IconText>
       </PlainButton>
       <Dialog open={open} setOpen={setOpen} title={'Owners'}>
         <PlainButton
           loading={loading}
+          className="text-red"
           onClick={async () => {
             try {
               if (!isOwner) {

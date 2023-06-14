@@ -5,6 +5,7 @@ import { ReactNode } from 'react'
 
 export const formSchemaBuyCredits = z.object({
   quantity: z.number(),
+  forSale: z.boolean().default(false),
 })
 
 export type FormTypeBuyCredits = z.infer<typeof formSchemaBuyCredits>

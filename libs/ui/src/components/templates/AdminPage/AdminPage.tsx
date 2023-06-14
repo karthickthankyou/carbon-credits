@@ -15,6 +15,7 @@ import { Dialog } from '../../atoms/Dialog'
 import { useAccount } from '@carbon-credits/hooks/web3'
 import { IconPlus } from '@tabler/icons-react'
 import { uploadImagesIPFS } from '@carbon-credits/util'
+import { VerifierCard } from '../../organisms/VerifierCard'
 
 export interface IAdminPageProps {}
 
@@ -37,7 +38,7 @@ export const AdminPage = ({}: IAdminPageProps) => {
         }}
       >
         {data?.verifiers.map((verifier) => (
-          <div key={verifier.walletAddress}>{verifier.walletAddress}</div>
+          <VerifierCard verifier={verifier} />
         ))}
       </ShowData>
     </div>
@@ -55,6 +56,8 @@ export const CreateVerifier = () => {
   } = useFormAddVerifier()
   const { account, contract } = useAccount()
   const [{ data, loading, error }, addVerifierFunction] = useAsync(addVerifier)
+  const [{ loading: uploading, data: ipfsImages }, uploadImagesIPFSAsync] =
+    useAsync(uploadImagesIPFS)
 
   return (
     <div>
@@ -75,7 +78,8 @@ export const CreateVerifier = () => {
               return
             }
 
-            const ipfsImages = await uploadImagesIPFS(imageUrl)
+            await uploadImagesIPFSAsync(imageUrl)
+            console.log('ipfsImages ', ipfsImages)
 
             await addVerifierFunction({
               account,
@@ -108,7 +112,11 @@ export const CreateVerifier = () => {
               </HtmlLabel>
             )}
           />
-          <Button disabled={Boolean(data)} loading={loading} type="submit">
+          <Button
+            disabled={Boolean(data)}
+            loading={loading || uploading}
+            type="submit"
+          >
             Add verifier
           </Button>
         </Form>

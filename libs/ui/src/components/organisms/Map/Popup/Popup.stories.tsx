@@ -28,7 +28,7 @@ const MultipleTemplate: ComponentStory<typeof Popup> = () => {
   const [open2, setOpen2] = useState(true)
   return (
     <>
-      <ShowHide show={open}>
+      <ShowHide>
         <Popup
           show={open}
           setShow={setOpen}
@@ -41,7 +41,7 @@ const MultipleTemplate: ComponentStory<typeof Popup> = () => {
           </div>
         </Popup>
       </ShowHide>
-      <ShowHide show={open2}>
+      <ShowHide>
         <Popup
           show={open}
           setShow={setOpen}

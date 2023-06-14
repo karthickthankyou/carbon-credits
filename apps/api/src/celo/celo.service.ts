@@ -85,7 +85,7 @@ export class CeloService {
           const { name, imageUrl, walletAddress, active } = event.returnValues
           console.log('VerifierAdded: ', event.returnValues)
           const newVerifier = await this.prisma.verifier.create({
-            data: { active: active === 'true', imageUrl, name, walletAddress },
+            data: { active: Boolean(active), imageUrl, name, walletAddress },
           })
 
           console.log('newVerifier', newVerifier)

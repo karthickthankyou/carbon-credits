@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 import axios from 'axios'
 import { format } from 'date-fns'
@@ -150,7 +150,6 @@ export const uploadImagesIPFS = async (files: any) => {
   console.log('ipfsDataArray ', ipfsDataArray)
   return ipfsDataArray
 }
-
 export const useFetchIPFS = (ipfsImages: string[]) => {
   const [images, setImages] = useState<string[]>([])
 

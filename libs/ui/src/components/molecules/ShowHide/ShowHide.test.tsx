@@ -5,7 +5,7 @@ import { ShowHide } from './ShowHide'
 describe('ShowHide Component', () => {
   test('ShowHide renders', () => {
     render(
-      <ShowHide show>
+      <ShowHide>
         <div>Hello</div>
       </ShowHide>,
     )

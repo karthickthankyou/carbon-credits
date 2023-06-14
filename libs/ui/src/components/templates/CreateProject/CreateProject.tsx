@@ -65,6 +65,9 @@ export const CreateProjectContent = ({}: ICreateProjectProps) => {
   const [{ data, loading, error }, createProjectFunction] =
     useAsync(createProject)
 
+  const [{ loading: uploading, data: ipfsImages }, uploadImagesIPFSAsync] =
+    useAsync(uploadImagesIPFS)
+
   // Reset on success.
   useEffect(() => {
     if (data) {
@@ -108,7 +111,7 @@ export const CreateProjectContent = ({}: ICreateProjectProps) => {
                 const bigIntLat = Math.round(latitude * 10000)
                 const bigIntLng = Math.round(longitude * 10000)
 
-                const ipfsImages = await uploadImagesIPFS(images)
+                await uploadImagesIPFSAsync(images)
 
                 createProjectFunction({
                   account,
@@ -151,7 +154,7 @@ export const CreateProjectContent = ({}: ICreateProjectProps) => {
             />
             <Button
               disabled={Boolean(data)}
-              loading={loading}
+              loading={loading || uploading}
               color="black"
               type="submit"
             >
@@ -168,6 +171,8 @@ export const CreateProjectContent = ({}: ICreateProjectProps) => {
                   setValue('location.longitude', lng, { shouldValidate: true })
                 }}
               />
+            </Panel>
+            <Panel position="right-center">
               <DefaultZoomControls>
                 <CenterOfMap
                   Icon={() => (
