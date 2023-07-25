@@ -5,7 +5,6 @@ import {
   ApolloProvider as Provider,
   split,
 } from '@apollo/client'
-import { WebSocketLink } from '@apollo/client/link/ws'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { createClient } from 'graphql-ws'
@@ -20,7 +19,7 @@ export const ApolloProvider = ({ children }: IApolloProviderProps) => {
   const { account } = useAccount()
 
   const httpLink = new HttpLink({
-    uri: 'http://localhost:3000/graphql',
+    uri: process.env.NEXT_PUBLIC_API_URL + '/graphql',
     headers: {
       authorization: account || '',
     },
@@ -28,7 +27,7 @@ export const ApolloProvider = ({ children }: IApolloProviderProps) => {
 
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: 'wss://localhost:3000/graphql',
+      url: process.env.NEXT_PUBLIC_API_URL + '/graphql',
       connectionParams: {
         authorization: account || '',
       },
