@@ -22,9 +22,6 @@ import { CreationsModule } from './models/creations/creations.module'
       driver: ApolloDriver,
       fieldResolverEnhancers: ['guards'],
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      buildSchemaOptions: {
-        numberScalarMode: 'integer',
-      },
     }),
 
     PrismaModule,

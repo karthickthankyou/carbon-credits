@@ -59,9 +59,9 @@ export const ShowData = ({
         {!hidePagination ? (
           <div className="flex justify-center">
             <Pagination
-              count={Math.floor(totalCount / take) || 0}
-              page={(skip || 0) / (take || 12)}
-              onChange={(v, c) => setSkip(c * (take || 12))}
+              count={Math.ceil(totalCount / take) || 1}
+              page={skip / (take || 12) + 1}
+              onChange={(v, c) => setSkip((c - 1) * (take || 12))}
             />
           </div>
         ) : null}

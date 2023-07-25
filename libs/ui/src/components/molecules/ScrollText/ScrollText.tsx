@@ -20,8 +20,8 @@ export const ScrollText = ({ input, className }: IScrollBannerProps) => {
 
   const markersTransitions = useTransition([input[selected]] || [], {
     keys: (item) => item,
-    from: { opacity: 0, transform: 'translateY(-6px)' },
-    enter: { opacity: 1, transform: 'translateY(0)' },
+    from: { opacity: 0, transform: 'translateX(-6px)' },
+    enter: { opacity: 1, transform: 'translateX(0)' },
 
     config: config.gentle,
   })
