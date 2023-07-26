@@ -1,4 +1,5 @@
-const { ethers, upgrades } = require('hardhat')
+const { ethers, upgrades, artifacts } = require('hardhat')
+const { saveContractInfo } = require('../util/saveContractInfo')
 const fs = require('fs')
 const path = require('path')
 
@@ -8,10 +9,9 @@ const deploy = async () => {
   const carbonCredits = await upgrades.deployProxy(CarbonCredits, [])
   console.log('CarbonCredits deployed to:', carbonCredits.address)
 
-  fs.writeFileSync(
-    path.join(__dirname, '../contractAddress.json'),
-    JSON.stringify({ contractAddress: carbonCredits.address }, null, 2),
-  )
+  const ContractArtifact = await artifacts.readArtifact('SustainabilityProject')
+
+  saveContractInfo(carbonCredits.address, ContractArtifact.abi)
 }
 
 deploy()

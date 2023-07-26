@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import Web3 from 'web3'
 import { Contract } from 'web3-eth-contract'
-import contractAddressJson from '../../standalone-projects/smart-contract/contractAddress.json'
-import abiJson from '../../standalone-projects/smart-contract/artifacts/contracts/CarbonCredits.sol/CarbonCredits.json'
+import {
+  abi,
+  contractAddress,
+} from '../../standalone-projects/smart-contract/contractInfo.json'
 
 declare global {
   interface Window {
@@ -69,10 +71,7 @@ export const useAccount = () => {
     setAccount(accounts[0])
 
     // Create a new instance of the contract
-    const contract = new web3.eth.Contract(
-      abiJson.abi,
-      contractAddressJson.contractAddress,
-    )
+    const contract = new web3.eth.Contract(abi, contractAddress)
     setContract(contract)
 
     // Check if the user is the owner of the contract
